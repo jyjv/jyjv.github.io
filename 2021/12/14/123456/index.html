@@ -5,13 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>categories - Hexo</title>
+    <title>攻防世界 - Hexo</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="Fechin,"> 
-    <meta name="description" content="tai好了，有博客了！
-"> 
+    <meta name="description" content="NaNNaNNaNNaN-Batman这一道题没有给环境，打开附件看的我一脸懵，还还以为是加密了，但想一想又不像是被加密了。然后看到了熟悉的标签，我还以为是xss，但是我又不知道该从何下手。于是去看,"> 
     <meta name="author" content="John Doe"> 
     <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
     <link rel="icon" href="/img/85E0B2FE93C1D59651632D67AC59568B.png"> 
@@ -31,7 +30,7 @@
     <div class="bar" style="width: 0;"></div>
     <a class="iconfont icon-home image-icon" href="javascript:;" data-url="http://example.com"></a>
     <div title="播放/暂停" class="iconfont icon-play"></div>
-    <h3 class="subtitle">categories</h3>
+    <h3 class="subtitle">攻防世界</h3>
     <div class="social">
         <div>
             <div class="share">
@@ -46,14 +45,32 @@
     <div class="section">
         <div class="article">
     <div class='main'>
-        <h1 class="title">categories</h1>
+        <h1 class="title">攻防世界</h1>
         <div class="stuff">
             <span>十二月 14, 2021</span>
             
 
         </div>
         <div class="content markdown">
-            <p>tai好了，有博客了！</p>
+            <h1 id="NaNNaNNaNNaN-Batman"><a href="#NaNNaNNaNNaN-Batman" class="headerlink" title="NaNNaNNaNNaN-Batman"></a>NaNNaNNaNNaN-Batman</h1><p>这一道题没有给环境，打开附件看的我一脸懵，还还以为是加密了，但想一想又不像是被加密了。然后看到了熟悉的标签，我还以为是xss，但是我又不知道该从何下手。于是去看了wp,感觉自己好懒，函数懒得去搜，果然还是函数出了问题。</p>
+<script>_='function $(){e=getEleById("c").value;length==16^be0f23233ace98aa$c7be9){tfls_aie}na_h0lnrg{e_0iit\'_ns=[t,n,r,i];for(o=0;o<13;++o){    [0]);.splice(0,1)}}}    \'<input id="c">< onclick=$()>Ok</>\');delete _var ","docu.)match(/"];/)!=null=["    write(s[o%4]buttonif(e.ment';for(Y in $='    ')with(_.split($[Y]))_=join(pop());eval(_)</script>
+
+<p>问题就出在eval这个函数身上，eval(string)函数可计算某个字符串，并执行其中的JavaScript代码。<img src="/2021/12/14/123456/2173462-20210112131239936-1971780407.png" class="" title="img"></p>
+<p>他把$()当作字符串执行而导致乱码，alert（）可以把$()中的内容作为弹窗显示出来，显示源代码。</p>
+<p>因为是javascript,因此可以选择在浏览器中打开，让其显示执行结果，附件显示出来一个输入框，修改后在浏览器中打开，显示出来的是源代码，复制整理后得到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">function $()</span><br><span class="line">&#123;</span><br><span class="line">    var e=document.getElementById(&quot;c&quot;).value;</span><br><span class="line">if(e.length==16)</span><br><span class="line">if(e.match(/^be0f23/)!=null)</span><br><span class="line">if(e.match(/233ac/)!=null)</span><br><span class="line">if(e.match(/e98aa$/)!=null)</span><br><span class="line">if(e.match(/c7be9/)!=null)</span><br><span class="line">&#123;var t=[&quot;fl&quot;,&quot;s_a&quot;,&quot;i&quot;,&quot;e&#125;&quot;];</span><br><span class="line">var n=[&quot;a&quot;,&quot;_h0l&quot;,&quot;n&quot;];</span><br><span class="line">var r=[&quot;g&#123;&quot;,&quot;e&quot;,&quot;_0&quot;];</span><br><span class="line">var i=[&quot;it&#x27;&quot;,&quot;_&quot;,&quot;n&quot;];</span><br><span class="line">var s=[t,n,r,i];</span><br><span class="line">for(var o=0;o&lt;13;++o)&#123;document.write(s[o%4][0]);</span><br><span class="line">s[o%4].splice(0,1)&#125;&#125;&#125;document.write(&#x27;&lt;input id=&quot;c&quot;&gt;&lt;button </span><br><span class="line">onclick=$()&gt;Ok&lt;/button&gt;&#x27;);</span><br><span class="line">delete _</span><br></pre></td></tr></table></figure>
+
+<p>又要考察函数了，这次考察的是splice() </p>
+<img src="/2021/12/14/123456/2173462-20210112131256987-1462219035.png" class="" title="img">
+
+<p>输入满足条件的e使其显示出来</p>
+<p>四个正则匹配</p>
+<p>/^be0f23/ ———- ^ 头部匹配</p>
+<p>/233ac/ ———- 中间匹配</p>
+<p>/e98aa$/ ———- $ 尾部匹配</p>
+<p>/c7be9/ ———- 中间匹配</p>
+<p>构造字符串e <strong>be0f233ac7be98aa</strong></p>
+<p>然后在输入框中输入即可获得flag</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
