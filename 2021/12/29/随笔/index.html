@@ -61,6 +61,9 @@
 <p>2.授权密码登陆 ，由第三方邮件系统登录</p>
 <p>客户端+授权密码登录</p>
 <p>这里尝试了第一种方法，接着尝试第二种方法。查看邮箱，分析得出账号和密码，根据中国人平时习惯，出生年月就是密码，试了试果然正确。</p>
+<h1 id="Bugku-变量1"><a href="#Bugku-变量1" class="headerlink" title="Bugku 变量1"></a>Bugku 变量1</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">flag In the variable ! <span class="meta">&lt;?php</span>  </span><br><span class="line"></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;flag1.php&quot;</span>;</span><br><span class="line">highlight_file(<span class="keyword">__file__</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;args&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$args</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;args&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/^\w+$/&quot;</span>,<span class="variable">$args</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;args error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">eval</span>(<span class="string">&quot;var_dump($<span class="subst">$args</span>);&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>看到include,</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
@@ -96,7 +99,7 @@
     </div>
     
         <div class='side'>
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Bugku-CTF-%E7%A4%BE%E5%B7%A5%E5%88%9D%E6%AD%A5%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">1.</span> <span class="toc-text">Bugku CTF 社工初步信息收集</span></a></li></ol>	
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Bugku-CTF-%E7%A4%BE%E5%B7%A5%E5%88%9D%E6%AD%A5%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">1.</span> <span class="toc-text">Bugku CTF 社工初步信息收集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Bugku-%E5%8F%98%E9%87%8F1"><span class="toc-number">2.</span> <span class="toc-text">Bugku 变量1</span></a></li></ol>	
         </div>
     
 </div>
