@@ -68,6 +68,21 @@
 <p> eval(“var_dump($$args);”);</p>
 <p>看这个函数出现了$$,这是可变变量，它允许动态改变一个变量名称。其工作原理是该变量的名称由另外一个变量的 值来确定。</p>
 <p>args=GLOBALS加到网页后面，就可以获得flag.</p>
+<h1 id="ctfhub-eval"><a href="#ctfhub-eval" class="headerlink" title="ctfhub eval"></a>ctfhub eval</h1><p>首先区分一下</p>
+<p>var_dump() 会将传入的变量打印到页面（变量类型，变量长度，变量值）</p>
+<p>eval()把传入的变量当作php代码执行</p>
+<p>echo()输出的是最终结果（变量类型和字符串）</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">include</span> <span class="string">&quot;flag.php&quot;</span>;</span><br><span class="line">    <span class="variable">$a</span> = @<span class="variable">$_REQUEST</span>[<span class="string">&#x27;hello&#x27;</span>];</span><br><span class="line">    <span class="keyword">eval</span>( <span class="string">&quot;var_dump(<span class="subst">$a</span>);&quot;</span>);</span><br><span class="line">    show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p> eval( “var_dump($a);”);</p>
+<p>考察知识点，本地文件包含和eval()函数</p>
+<p>要求传入的变量是hello</p>
+<p>因此有两种做法：</p>
+<p>1./?hello=system(‘cat flag.php’)</p>
+<p>2./?hello=file(“flag.php”)</p>
+<p>file()函数将整个文件读入到一个数组中。与 file_get_contents() 类似，不同的是 file() 将文件作为一个数组返回。<strong>数组中的每个单元都是文件中相应的一行</strong>，包括换行符在内。如果失败，则返回 false。</p>
+<p><strong>file(path,include_path,context)</strong></p>
+<p><img src="%E9%9A%8F%E7%AC%94.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dzc21pc3M=,size_16,color_FFFFFF,t_70.png" alt="在这里插入图片描述"></p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
@@ -103,7 +118,7 @@
     </div>
     
         <div class='side'>
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Bugku-CTF-%E7%A4%BE%E5%B7%A5%E5%88%9D%E6%AD%A5%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">1.</span> <span class="toc-text">Bugku CTF 社工初步信息收集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Bugku-%E5%8F%98%E9%87%8F1"><span class="toc-number">2.</span> <span class="toc-text">Bugku 变量1</span></a></li></ol>	
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Bugku-CTF-%E7%A4%BE%E5%B7%A5%E5%88%9D%E6%AD%A5%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">1.</span> <span class="toc-text">Bugku CTF 社工初步信息收集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Bugku-%E5%8F%98%E9%87%8F1"><span class="toc-number">2.</span> <span class="toc-text">Bugku 变量1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ctfhub-eval"><span class="toc-number">3.</span> <span class="toc-text">ctfhub eval</span></a></li></ol>	
         </div>
     
 </div>
