@@ -63,7 +63,11 @@
 <p>这里尝试了第一种方法，接着尝试第二种方法。查看邮箱，分析得出账号和密码，根据中国人平时习惯，出生年月就是密码，试了试果然正确。</p>
 <h1 id="Bugku-变量1"><a href="#Bugku-变量1" class="headerlink" title="Bugku 变量1"></a>Bugku 变量1</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">flag In the variable ! <span class="meta">&lt;?php</span>  </span><br><span class="line"></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;flag1.php&quot;</span>;</span><br><span class="line">highlight_file(<span class="keyword">__file__</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;args&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$args</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;args&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/^\w+$/&quot;</span>,<span class="variable">$args</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;args error!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">eval</span>(<span class="string">&quot;var_dump($<span class="subst">$args</span>);&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p>看到include,</p>
+<p>看到include,原以为是文件包含漏洞，但是尝试了php://filter伪协议，不对诶。</p>
+<p>思来想去不是文件包含漏洞，然后查看WP,好吧，又学了新东西。</p>
+<p> eval(“var_dump($$args);”);</p>
+<p>看这个函数出现了$$,这是可变变量，它允许动态改变一个变量名称。其工作原理是该变量的名称由另外一个变量的 值来确定。</p>
+<p>args=GLOBALS加到网页后面，就可以获得flag.</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
