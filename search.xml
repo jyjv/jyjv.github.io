@@ -242,6 +242,17 @@ printf(serialize($c));
 <p>文件包含漏洞 利用伪协议进行读取</p>
 <p>?php://filter/convert.base64-encode/resource=flag.php</p>
 <p>然后base64解密即可</p>
+<h1 id="bugku-source"><a href="#bugku-source" class="headerlink" title="bugku source"></a>bugku source</h1><p>题目提示要用linux环境，这里使用dirb目录扫描工具</p>
+<p>做题步骤：</p>
+<p>1.扫描</p>
+<p>dirb URL</p>
+<p>2.下载文件</p>
+<p>wget -r url</p>
+<p>3.找到文件，并且用终端打开</p>
+<p>4.查看目录</p>
+<p>git reflog</p>
+<p>5.查看文件</p>
+<p>git show 文件名</p>
 ]]></content>
       <categories>
         <category>随笔</category>
