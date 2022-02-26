@@ -1,60 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>攻防世界</title>
-    <url>/2021/12/14/123456/</url>
-    <content><![CDATA[<h1 id="NaNNaNNaNNaN-Batman"><a href="#NaNNaNNaNNaN-Batman" class="headerlink" title="NaNNaNNaNNaN-Batman"></a>NaNNaNNaNNaN-Batman</h1><p>这一道题没有给环境，打开附件看的我一脸懵，还还以为是加密了，但想一想又不像是被加密了。然后看到了熟悉的标签，我还以为是xss，但是我又不知道该从何下手。于是去看了wp,感觉自己好懒，函数懒得去搜，果然还是函数出了问题。</p>
-<script>_='function $(){e=getEleById("c").value;length==16^be0f23233ace98aa$c7be9){tfls_aie}na_h0lnrg{e_0iit\'_ns=[t,n,r,i];for(o=0;o<13;++o){    [0]);.splice(0,1)}}}    \'<input id="c">< onclick=$()>Ok</>\');delete _var ","docu.)match(/"];/)!=null=["    write(s[o%4]buttonif(e.ment';for(Y in $='    ')with(_.split($[Y]))_=join(pop());eval(_)</script>
-
-<p>问题就出在eval这个函数身上，eval(string)函数可计算某个字符串，并执行其中的JavaScript代码。<img src="/2021/12/14/123456/2173462-20210112131239936-1971780407.png" class="" title="img"></p>
-<p>他把$()当作字符串执行而导致乱码，alert（）可以把$()中的内容作为弹窗显示出来，显示源代码。</p>
-<p>因为是javascript,因此可以选择在浏览器中打开，让其显示执行结果，附件显示出来一个输入框，修改后在浏览器中打开，显示出来的是源代码，复制整理后得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">function $()</span><br><span class="line">&#123;</span><br><span class="line">    var e=document.getElementById(&quot;c&quot;).value;</span><br><span class="line">if(e.length==16)</span><br><span class="line">if(e.match(/^be0f23/)!=null)</span><br><span class="line">if(e.match(/233ac/)!=null)</span><br><span class="line">if(e.match(/e98aa$/)!=null)</span><br><span class="line">if(e.match(/c7be9/)!=null)</span><br><span class="line">&#123;var t=[&quot;fl&quot;,&quot;s_a&quot;,&quot;i&quot;,&quot;e&#125;&quot;];</span><br><span class="line">var n=[&quot;a&quot;,&quot;_h0l&quot;,&quot;n&quot;];</span><br><span class="line">var r=[&quot;g&#123;&quot;,&quot;e&quot;,&quot;_0&quot;];</span><br><span class="line">var i=[&quot;it&#x27;&quot;,&quot;_&quot;,&quot;n&quot;];</span><br><span class="line">var s=[t,n,r,i];</span><br><span class="line">for(var o=0;o&lt;13;++o)&#123;document.write(s[o%4][0]);</span><br><span class="line">s[o%4].splice(0,1)&#125;&#125;&#125;document.write(&#x27;&lt;input id=&quot;c&quot;&gt;&lt;button </span><br><span class="line">onclick=$()&gt;Ok&lt;/button&gt;&#x27;);</span><br><span class="line">delete _</span><br></pre></td></tr></table></figure>
-
-<p>又要考察函数了，这次考察的是splice() </p>
-<img src="/2021/12/14/123456/2173462-20210112131256987-1462219035.png" class="" title="img">
-
-<p>输入满足条件的e使其显示出来</p>
-<p>四个正则匹配</p>
-<p>/^be0f23/ ———- ^ 头部匹配</p>
-<p>/233ac/ ———- 中间匹配</p>
-<p>/e98aa$/ ———- $ 尾部匹配</p>
-<p>/c7be9/ ———- 中间匹配</p>
-<p>构造字符串e <strong>be0f233ac7be98aa</strong></p>
-<p>然后在输入框中输入即可获得flag</p>
-<h1 id="unserialize3"><a href="#unserialize3" class="headerlink" title="unserialize3"></a>unserialize3</h1><p>class xctf{<br>public $flag = ‘111’;<br>public function __wakeup(){<br>exit(‘bad requests’);<br>}<br>?code=</p>
-<p>exit()这个函数和die()这个函数差不多，输出一条脚本之后，就退出当前脚本。当然不能让他退出呀，想办法让他绕过wakeup(),这个函数。</p>
-<?php
-class xctf{
-public $flag = '111';
-public function __wakeup(){
-exit('bad requests');
-}
-}
-$c=new xctf();
-printf(serialize($c));
-?>
-
-<p>O:4:”xctf”:1:{s:4:”flag”;s:3:”111”;}</p>
-<p>绕过后O:4:”xctf”:2:{s:4:”flag”;s:3:”111”;}</p>
-<p>？code=O:4:”xctf”:2:{s:4:”flag”;s:3:”111”;}</p>
-<p>获得flag</p>
-<h1 id="python-template-injection"><a href="#python-template-injection" class="headerlink" title="_python_template_injection"></a>_python_template_injection</h1><p>????????python????????????????????????<br>???????&lt;type ?object?&gt;?&gt;?????&gt;?????????????????</p>
-<p><strong>class</strong>  ?????????<br><strong>mro</strong>    ?????????????????????????????????<br><strong>base</strong>   ???????????  // <strong>base</strong>?<strong>mro</strong>?????????</p>
-<p><strong>subclasses</strong>   ???????????????????????????????????<br><strong>init</strong>  ???????<br><strong>globals</strong>  ???????????????</p>
-<h1 id="ctfshow-web-3"><a href="#ctfshow-web-3" class="headerlink" title="ctfshow web 3"></a>ctfshow web 3</h1><p>/?id=2 union select * from article where id=1000</p>
-<p>?????????????????????????</p>
-<h1 id="ctfshow-web-4"><a href="#ctfshow-web-4" class="headerlink" title="ctfshow web 4"></a>ctfshow web 4</h1><p>/or|-|\|/|\*|&lt;|&gt;|!|x|hex|(|)|+|select/i”</p>
-<p>?select?????? /?id=2 || id=1000</p>
-<p><strong>intval()????????????????????????????????????</strong></p>
-<p><strong>????????????????</strong></p>
-<p>|??????</p>
-<h1 id="ctfshow-web-5"><a href="#ctfshow-web-5" class="headerlink" title="ctfshow web 5"></a>ctfshow web 5</h1><p>/?id=~~1000</p>
-<p>?????payload?????get???????????????????? ?~~1000? ???????intval()???????? 0</p>
-<p>?select?????????????id=1000</p>
-]]></content>
-  </entry>
-  <entry>
     <title>buuctf</title>
     <url>/2022/01/16/buuctf/</url>
     <content><![CDATA[<h1 id="buuctf-http"><a href="#buuctf-http" class="headerlink" title="buuctf http"></a>buuctf http</h1><p>考察http,感觉多多少少有点忘记了</p>
@@ -382,6 +328,18 @@ printf(serialize($c));
 <p>读取文件，直接进行读取没有读出来，然后利用file://协议进行读取，读了出来</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?url=file://suctf.c℆sr/local/nginx/conf/nginx.conf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
+<h1 id="网鼎杯-2020-朱雀组-Nmap1"><a href="#网鼎杯-2020-朱雀组-Nmap1" class="headerlink" title="[网鼎杯 2020 朱雀组]Nmap1"></a>[网鼎杯 2020 朱雀组]Nmap1</h1><p><strong>nmap的文件写入：</strong></p>
+<ul>
+<li>-oN 标准保存</li>
+<li>-oX XML保存</li>
+<li>-oG Grep保存</li>
+<li>-oA 保存到所有格式</li>
+<li>-append-output 补充保存文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nmap -T5 -sT -Pn --host-timeout 2 -F </span><br><span class="line"></span><br><span class="line">-T5: 即Insane模式，适合快速的网络或者不在意丢失默些信息,对每台主机的超时限制为75秒,对每次探测只等待0.3秒</span><br><span class="line">-sT: TCP连接扫描</span><br><span class="line">-Pn: 无Ping扫描,可以躲避防火墙防护,可以在目标主机禁止ping的情况下使用</span><br><span class="line">-F : 快速扫描</span><br><span class="line">-oG: nmap -F -oG test.txt 192.168.23.1 将扫描结果保存到test.txt</span><br></pre></td></tr></table></figure>
+
+<p>参考文章：[(47条消息) BUUCTF <a href="https://blog.csdn.net/weixin_44037296/article/details/110893526">网鼎杯 2020 朱雀组] Nmap_Senimo-CSDN博客</a></p>
+<p>php被过滤了</p>
 ]]></content>
       <categories>
         <category>buuctf</category>
@@ -689,6 +647,25 @@ printf(serialize($c));
 <p>经过过滤后有两种情况，一种是增多，一种是减少</p>
 <p>该题为减少，有两种解决方法，一种是值逃逸，另外一种是键逃逸</p>
 <p><a href="https://blog.csdn.net/a3320315/article/details/104118688/">(47条消息) 安洵杯2019 easy_serialize_php (反序列化中的对象逃逸)_a3320315的博客-CSDN博客_easy_serialize_php</a></p>
+<h1 id="0CTF-2016-piapiapia1"><a href="#0CTF-2016-piapiapia1" class="headerlink" title="[0CTF 2016]piapiapia1"></a>[0CTF 2016]piapiapia1</h1><p>扫描后得到<a href="http://www.php文件,下载之后得到一些文件,打开之后看到/">www.php文件，下载之后得到一些文件，打开之后看到</a></p>
+<p><strong>config.php</strong>   <strong>显示配置信息</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="variable">$config</span>[<span class="string">&#x27;hostname&#x27;</span>] = <span class="string">&#x27;127.0.0.1&#x27;</span>;</span><br><span class="line">	<span class="variable">$config</span>[<span class="string">&#x27;username&#x27;</span>] = <span class="string">&#x27;root&#x27;</span>;</span><br><span class="line">	<span class="variable">$config</span>[<span class="string">&#x27;password&#x27;</span>] = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">	<span class="variable">$config</span>[<span class="string">&#x27;database&#x27;</span>] = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">	<span class="variable">$flag</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在这个文件中包含flag，</p>
+<p><strong>update.php</strong>     <strong>上传文件</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="keyword">require_once</span>(<span class="string">&#x27;class.php&#x27;</span>);</span><br><span class="line">	<span class="keyword">if</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;username&#x27;</span>] == <span class="literal">null</span>) &#123;</span><br><span class="line">		<span class="keyword">die</span>(<span class="string">&#x27;Login First&#x27;</span>);	</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;phone&#x27;</span>] &amp;&amp; <span class="variable">$_POST</span>[<span class="string">&#x27;email&#x27;</span>] &amp;&amp; <span class="variable">$_POST</span>[<span class="string">&#x27;nickname&#x27;</span>] &amp;&amp; <span class="variable">$_FILES</span>[<span class="string">&#x27;photo&#x27;</span>]) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="variable">$username</span> = <span class="variable">$_SESSION</span>[<span class="string">&#x27;username&#x27;</span>];</span><br><span class="line">		<span class="keyword">if</span>(!preg_match(<span class="string">&#x27;/^\d&#123;11&#125;$/&#x27;</span>, <span class="variable">$_POST</span>[<span class="string">&#x27;phone&#x27;</span>]))</span><br><span class="line">			<span class="keyword">die</span>(<span class="string">&#x27;Invalid phone&#x27;</span>);<span class="comment">//限制包含11个数字</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(!preg_match(<span class="string">&#x27;/^[_a-zA-Z0-9]&#123;1,10&#125;@[_a-zA-Z0-9]&#123;1,10&#125;\.[_a-zA-Z0-9]&#123;1,10&#125;$/&#x27;</span>, <span class="variable">$_POST</span>[<span class="string">&#x27;email&#x27;</span>]))</span><br><span class="line">			<span class="keyword">die</span>(<span class="string">&#x27;Invalid email&#x27;</span>);<span class="comment">//Email格式</span></span><br><span class="line">		</span><br><span class="line">		<span class="keyword">if</span>(preg_match(<span class="string">&#x27;/[^a-zA-Z0-9_]/&#x27;</span>, <span class="variable">$_POST</span>[<span class="string">&#x27;nickname&#x27;</span>]) || strlen(<span class="variable">$_POST</span>[<span class="string">&#x27;nickname&#x27;</span>]) &gt; <span class="number">10</span>)<span class="comment">//要使逻辑为假，前面为真，因此后面也为真，采用数组的方法绕过长度限制</span></span><br><span class="line">			<span class="keyword">die</span>(<span class="string">&#x27;Invalid nickname&#x27;</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$file</span> = <span class="variable">$_FILES</span>[<span class="string">&#x27;photo&#x27;</span>];</span><br><span class="line">		<span class="keyword">if</span>(<span class="variable">$file</span>[<span class="string">&#x27;size&#x27;</span>] &lt; <span class="number">5</span> <span class="keyword">or</span> <span class="variable">$file</span>[<span class="string">&#x27;size&#x27;</span>] &gt; <span class="number">1000000</span>)</span><br><span class="line">			<span class="keyword">die</span>(<span class="string">&#x27;Photo size error&#x27;</span>);</span><br><span class="line"></span><br><span class="line">		move_uploaded_file(<span class="variable">$file</span>[<span class="string">&#x27;tmp_name&#x27;</span>], <span class="string">&#x27;upload/&#x27;</span> . md5(<span class="variable">$file</span>[<span class="string">&#x27;name&#x27;</span>]));</span><br><span class="line">		<span class="variable">$profile</span>[<span class="string">&#x27;phone&#x27;</span>] = <span class="variable">$_POST</span>[<span class="string">&#x27;phone&#x27;</span>];</span><br><span class="line">		<span class="variable">$profile</span>[<span class="string">&#x27;email&#x27;</span>] = <span class="variable">$_POST</span>[<span class="string">&#x27;email&#x27;</span>];</span><br><span class="line">		<span class="variable">$profile</span>[<span class="string">&#x27;nickname&#x27;</span>] = <span class="variable">$_POST</span>[<span class="string">&#x27;nickname&#x27;</span>];</span><br><span class="line">		<span class="variable">$profile</span>[<span class="string">&#x27;photo&#x27;</span>] = <span class="string">&#x27;upload/&#x27;</span> . md5(<span class="variable">$file</span>[<span class="string">&#x27;name&#x27;</span>]);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$user</span>-&gt;update_profile(<span class="variable">$username</span>, serialize(<span class="variable">$profile</span>));<span class="comment">//寻找update_profile，并且存在序列化</span></span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&#x27;Update Profile Success!&lt;a href=&quot;profile.php&quot;&gt;Your Profile&lt;/a&gt;&#x27;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>_POST[‘nickname’]) &gt; 10 绕过  nickname[]****=</strong></p>
+<p><strong>class.php</strong> <strong>存在重要函数</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">update_profile</span>(<span class="params"><span class="variable">$username</span>, <span class="variable">$new_profile</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$username</span> = <span class="built_in">parent</span>::filter(<span class="variable">$username</span>);</span><br><span class="line">		<span class="variable">$new_profile</span> = <span class="built_in">parent</span>::filter(<span class="variable">$new_profile</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$where</span> = <span class="string">&quot;username = &#x27;<span class="subst">$username</span>&#x27;&quot;</span>;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">parent</span>::update(<span class="keyword">$this</span>-&gt;table, <span class="string">&#x27;profile&#x27;</span>, <span class="variable">$new_profile</span>, <span class="variable">$where</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后寻找filter</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">filter</span>(<span class="params"><span class="variable">$string</span></span>) </span>&#123;</span><br><span class="line">		<span class="variable">$escape</span> = <span class="keyword">array</span>(<span class="string">&#x27;\&#x27;&#x27;</span>, <span class="string">&#x27;\\\\&#x27;</span>);</span><br><span class="line">		<span class="variable">$escape</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$escape</span>) . <span class="string">&#x27;/&#x27;</span>;</span><br><span class="line">		<span class="variable">$string</span> = preg_replace(<span class="variable">$escape</span>, <span class="string">&#x27;_&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line"></span><br><span class="line">		<span class="variable">$safe</span> = <span class="keyword">array</span>(<span class="string">&#x27;select&#x27;</span>, <span class="string">&#x27;insert&#x27;</span>, <span class="string">&#x27;update&#x27;</span>, <span class="string">&#x27;delete&#x27;</span>, <span class="string">&#x27;where&#x27;</span>);</span><br><span class="line">		<span class="variable">$safe</span> = <span class="string">&#x27;/&#x27;</span> . implode(<span class="string">&#x27;|&#x27;</span>, <span class="variable">$safe</span>) . <span class="string">&#x27;/i&#x27;</span>;</span><br><span class="line">		<span class="keyword">return</span> preg_replace(<span class="variable">$safe</span>, <span class="string">&#x27;hacker&#x27;</span>, <span class="variable">$string</span>);</span><br><span class="line">	&#125;<span class="comment">//进行了替换，想到字符串逃逸</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>profile.php****读取文件</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="keyword">require_once</span>(<span class="string">&#x27;class.php&#x27;</span>);</span><br><span class="line">	<span class="keyword">if</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;username&#x27;</span>] == <span class="literal">null</span>) &#123;</span><br><span class="line">		<span class="keyword">die</span>(<span class="string">&#x27;Login First&#x27;</span>);	</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="variable">$username</span> = <span class="variable">$_SESSION</span>[<span class="string">&#x27;username&#x27;</span>];</span><br><span class="line">	<span class="variable">$profile</span>=<span class="variable">$user</span>-&gt;show_profile(<span class="variable">$username</span>);</span><br><span class="line">	<span class="keyword">if</span>(<span class="variable">$profile</span>  == <span class="literal">null</span>) &#123;</span><br><span class="line">		header(<span class="string">&#x27;Location: update.php&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="variable">$profile</span> = unserialize(<span class="variable">$profile</span>);</span><br><span class="line">		<span class="variable">$phone</span> = <span class="variable">$profile</span>[<span class="string">&#x27;phone&#x27;</span>];</span><br><span class="line">		<span class="variable">$email</span> = <span class="variable">$profile</span>[<span class="string">&#x27;email&#x27;</span>];</span><br><span class="line">		<span class="variable">$nickname</span> = <span class="variable">$profile</span>[<span class="string">&#x27;nickname&#x27;</span>];</span><br><span class="line">		<span class="variable">$photo</span> = base64_encode(file_get_contents(<span class="meta">&lt;?php</span></span><br><span class="line">	<span class="keyword">require_once</span>(<span class="string">&#x27;class.php&#x27;</span>);</span><br><span class="line">	<span class="keyword">if</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;username&#x27;</span>] == <span class="literal">null</span>) &#123;</span><br><span class="line">		<span class="keyword">die</span>(<span class="string">&#x27;Login First&#x27;</span>);	</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="variable">$username</span> = <span class="variable">$_SESSION</span>[<span class="string">&#x27;username&#x27;</span>];</span><br><span class="line">	<span class="variable">$profile</span>=<span class="variable">$user</span>-&gt;show_profile(<span class="variable">$username</span>);</span><br><span class="line">	<span class="keyword">if</span>(<span class="variable">$profile</span>  == <span class="literal">null</span>) &#123;</span><br><span class="line">		header(<span class="string">&#x27;Location: update.php&#x27;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="variable">$profile</span> = unserialize(<span class="variable">$profile</span>);</span><br><span class="line">		<span class="variable">$phone</span> = <span class="variable">$profile</span>[<span class="string">&#x27;phone&#x27;</span>];</span><br><span class="line">		<span class="variable">$email</span> = <span class="variable">$profile</span>[<span class="string">&#x27;email&#x27;</span>];</span><br><span class="line">		<span class="variable">$nickname</span> = <span class="variable">$profile</span>[<span class="string">&#x27;nickname&#x27;</span>];</span><br><span class="line">		<span class="variable">$photo</span> = base64_encode(file_get_contents(<span class="variable">$profile</span>[<span class="string">&#x27;photo&#x27;</span>]));</span><br><span class="line"><span class="meta">?&gt;</span><span class="comment">//可以读取文件，$profile[&#x27;photo&#x27;]这个参数是关键，这里可以想到用用这个变量来包含config.php文件，从而读取flag,利用字符串逃逸，是构造的部分被读取，后面传入的参数无效</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>[(49条消息) BUUCTF <a href="https://blog.csdn.net/weixin_44037296/article/details/112183323">0CTF 2016] piapiapia_Senimo-CSDN博客</a></p>
 ]]></content>
       <categories>
         <category>unserialize</category>
@@ -708,6 +685,8 @@ printf(serialize($c));
     <content><![CDATA[<p><a href="https://blog.csdn.net/Z_Grant/article/details/100606382">(47条消息) 文件包含——原理及应用和防护（1）_Z_Grant的博客-CSDN博客_文件包含的作用</a></p>
 <p><a href="https://blog.csdn.net/Z_Grant/article/details/100606382">https://blog.csdn.net/Z_Grant/article/details/100606382</a></p>
 <p><a href="https://blog.csdn.net/aweiname2008/article/details/119522187">(47条消息) 从0到1 CTFer成功之路》任意文件读取漏洞—学习笔记_aweiname2008的博客-CSDN博客_任意文件读取漏洞</a></p>
+<h1 id="木马"><a href="#木马" class="headerlink" title="木马"></a>木马</h1><p><a href="https://blog.csdn.net/weixin_39190897/article/details/86772765">(47条消息) Web安全-一句话木马_Tr0e-CSDN博客_一句话木马</a></p>
+<p><a href="https://www.cnblogs.com/moon3/p/12688281.html">php一句话木马变形技巧 - moon3 - 博客园 (cnblogs.com)</a></p>
 ]]></content>
       <categories>
         <category>buuctf*</category>
@@ -715,5 +694,10 @@ printf(serialize($c));
       <tags>
         <tag>buuctf*</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>upload</title>
+    <url>/2022/02/14/ssi/</url>
+    <content><![CDATA[]]></content>
   </entry>
 </search>
