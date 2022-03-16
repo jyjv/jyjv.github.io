@@ -10,8 +10,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="Fechin,"> 
-    <meta name="description" content="攻防世界-supersqli打开是sql注入，但是过滤了好多东西 /select|update|delete|drop|insrt|where|./i
-网上搜了搜开始尝试着绕过，但是尝试了好几种绕过,"> 
+    <meta name="description" content="知识点题攻防世界-supersqli打开是sql注入，但是过滤了好多东西 /select|update|delete|drop|insrt|where|./i
+网上搜了搜开始尝试着绕过，但是尝试了好,"> 
     <meta name="author" content="John Doe"> 
     <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
     <link rel="icon" href="/img/85E0B2FE93C1D59651632D67AC59568B.png"> 
@@ -55,7 +55,7 @@
 
         </div>
         <div class="content markdown">
-            <h1 id="攻防世界-supersqli"><a href="#攻防世界-supersqli" class="headerlink" title="攻防世界-supersqli"></a>攻防世界-supersqli</h1><p>打开是sql注入，但是过滤了好多东西 /select|update|delete|drop|insrt|where|./i</p>
+            <h1 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a><strong>知识点</strong></h1><h1 id="题"><a href="#题" class="headerlink" title="题"></a>题</h1><h2 id="攻防世界-supersqli"><a href="#攻防世界-supersqli" class="headerlink" title="攻防世界-supersqli"></a>攻防世界-supersqli</h2><p>打开是sql注入，但是过滤了好多东西 /select|update|delete|drop|insrt|where|./i</p>
 <p>网上搜了搜开始尝试着绕过，但是尝试了好几种绕过方法都不行，看了一下wp，知道是要采用堆叠注入，第一次知道，网上开搜。</p>
 <p>1.查数据库</p>
 <p>-1’;show databases;#</p>
@@ -135,7 +135,7 @@
 
 <p>参考文章：[<a target="_blank" rel="noopener" href="https://www.cnblogs.com/AikN/p/15725756.html">SWPU2019]Web1 - AikNr - 博客园 (cnblogs.com)</a></p>
 <h1 id="好文章"><a href="#好文章" class="headerlink" title="好文章"></a>好文章</h1><p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/160584#h2-12">CTF中几种通用的sql盲注手法和注入的一些tips - 安全客，安全资讯平台 (anquanke.com)</a></p>
-<h1 id="题"><a href="#题" class="headerlink" title="题"></a>题</h1><h2 id="CISCN2019-总决赛-Day2-Web1-Easyweb1"><a href="#CISCN2019-总决赛-Day2-Web1-Easyweb1" class="headerlink" title="[CISCN2019 总决赛 Day2 Web1]Easyweb1"></a>[CISCN2019 总决赛 Day2 Web1]Easyweb1</h2><p>用御剑扫描之后可以得到robots.txt文件，这个文件中</p>
+<h1 id="题-1"><a href="#题-1" class="headerlink" title="题"></a>题</h1><h2 id="CISCN2019-总决赛-Day2-Web1-Easyweb1"><a href="#CISCN2019-总决赛-Day2-Web1-Easyweb1" class="headerlink" title="[CISCN2019 总决赛 Day2 Web1]Easyweb1"></a>[CISCN2019 总决赛 Day2 Web1]Easyweb1</h2><p>用御剑扫描之后可以得到robots.txt文件，这个文件中</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User-agent: *</span><br><span class="line">Disallow: *.php.bak</span><br></pre></td></tr></table></figure>
 
 <p>但是文件名字不知道，在查看源码中得到image.php?id=1   </p>
@@ -178,7 +178,7 @@
     </div>
     
         <div class='side'>
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-supersqli"><span class="toc-number">1.</span> <span class="toc-text">攻防世界-supersqli</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-number">2.</span> <span class="toc-text">报错注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sql%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87%E5%A4%A7%E5%85%A8"><span class="toc-number">3.</span> <span class="toc-text">sql注入绕过大全</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%97%A0%E5%88%97%E5%90%8D%E6%9F%A5%E8%AF%A2"><span class="toc-number">4.</span> <span class="toc-text">无列名查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SWPU2019-Web1"><span class="toc-number">4.1.</span> <span class="toc-text">[SWPU2019]Web1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-innodb-table-stats"><span class="toc-number">4.2.</span> <span class="toc-text">mysql.innodb_table_stats</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sys-schema-table-statistics"><span class="toc-number">4.3.</span> <span class="toc-text">sys.schema_table_statistics</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5"><span class="toc-number">4.4.</span> <span class="toc-text">无列名注入</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A5%BD%E6%96%87%E7%AB%A0"><span class="toc-number">5.</span> <span class="toc-text">好文章</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98"><span class="toc-number">6.</span> <span class="toc-text">题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CISCN2019-%E6%80%BB%E5%86%B3%E8%B5%9B-Day2-Web1-Easyweb1"><span class="toc-number">6.1.</span> <span class="toc-text">[CISCN2019 总决赛 Day2 Web1]Easyweb1</span></a></li></ol></li></ol>	
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-number">1.</span> <span class="toc-text">知识点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-supersqli"><span class="toc-number">2.1.</span> <span class="toc-text">攻防世界-supersqli</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-number">3.</span> <span class="toc-text">报错注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sql%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87%E5%A4%A7%E5%85%A8"><span class="toc-number">4.</span> <span class="toc-text">sql注入绕过大全</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%97%A0%E5%88%97%E5%90%8D%E6%9F%A5%E8%AF%A2"><span class="toc-number">5.</span> <span class="toc-text">无列名查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SWPU2019-Web1"><span class="toc-number">5.1.</span> <span class="toc-text">[SWPU2019]Web1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-innodb-table-stats"><span class="toc-number">5.2.</span> <span class="toc-text">mysql.innodb_table_stats</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sys-schema-table-statistics"><span class="toc-number">5.3.</span> <span class="toc-text">sys.schema_table_statistics</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5"><span class="toc-number">5.4.</span> <span class="toc-text">无列名注入</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A5%BD%E6%96%87%E7%AB%A0"><span class="toc-number">6.</span> <span class="toc-text">好文章</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A2%98-1"><span class="toc-number">7.</span> <span class="toc-text">题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CISCN2019-%E6%80%BB%E5%86%B3%E8%B5%9B-Day2-Web1-Easyweb1"><span class="toc-number">7.1.</span> <span class="toc-text">[CISCN2019 总决赛 Day2 Web1]Easyweb1</span></a></li></ol></li></ol>	
         </div>
     
 </div>
