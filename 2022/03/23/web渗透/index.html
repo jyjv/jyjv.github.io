@@ -67,6 +67,19 @@
 <p>是指正式提供对外服务的，一般会关掉错误报告，打开错误日志。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a)虚拟机软件直接安装在计算机硬件上</span><br><span class="line">b)虚拟机本身就是一个操作系统</span><br><span class="line">c)在这个虚拟机可以同时进行多个操作系统</span><br></pre></td></tr></table></figure>
 
+<h1 id="web安全"><a href="#web安全" class="headerlink" title="web安全"></a>web安全</h1><h2 id="HTTP协议解析"><a href="#HTTP协议解析" class="headerlink" title="HTTP协议解析"></a>HTTP协议解析</h2><h3 id="1-发起HTTP请求"><a href="#1-发起HTTP请求" class="headerlink" title="1.发起HTTP请求"></a>1.发起HTTP请求</h3><p>Linux系统:利用curl命令</p>
+<p>windows系统:利用curl.exe 工具发起请求，通过curl +URL</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl http://www.baidu.com  返回HTML</span><br><span class="line">curl http://www.baidu.com -1 返回http响应头</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-HTTP详解"><a href="#2-HTTP详解" class="headerlink" title="2.HTTP详解"></a>2.HTTP详解</h3><p>见网上</p>
+<h3 id="3-HTTP请求方法"><a href="#3-HTTP请求方法" class="headerlink" title="3.HTTP请求方法"></a>3.HTTP请求方法</h3><p>GET 有大小长度限制，将发送的数据显示在浏览器端</p>
+<p>HEAD  </p>
+<p>POST</p>
+<p>PUT </p>
+<p>DELETE</p>
+<p>TRACE</p>
+<p>CONNECT</p>
+<p>OPTIONS</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
@@ -102,7 +115,7 @@
     </div>
     
         <div class='side'>
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%8C%96%E7%BB%93%E6%9E%84%E4%B8%8E%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2"><span class="toc-number">1.</span> <span class="toc-text">虚拟化结构与系统部署</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%BF%90%E8%A1%8C%E6%9E%B6%E6%9E%84"><span class="toc-number">1.1.</span> <span class="toc-text">虚拟机运行架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%8C%E5%AF%84%E5%B1%85%E6%9E%B6%E6%9E%84%EF%BC%88%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83%EF%BC%8C%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%EF%BC%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">1，寄居架构（实验环境，测试环境）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%8C%E5%8E%9F%E7%94%9F%E6%9E%B6%E6%9E%84%EF%BC%88%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">2，原生架构（生产环境）</span></a></li></ol></li></ol></li></ol>	
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%8C%96%E7%BB%93%E6%9E%84%E4%B8%8E%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2"><span class="toc-number">1.</span> <span class="toc-text">虚拟化结构与系统部署</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%BF%90%E8%A1%8C%E6%9E%B6%E6%9E%84"><span class="toc-number">1.1.</span> <span class="toc-text">虚拟机运行架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%8C%E5%AF%84%E5%B1%85%E6%9E%B6%E6%9E%84%EF%BC%88%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83%EF%BC%8C%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%EF%BC%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">1，寄居架构（实验环境，测试环境）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%8C%E5%8E%9F%E7%94%9F%E6%9E%B6%E6%9E%84%EF%BC%88%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%EF%BC%89"><span class="toc-number">1.1.2.</span> <span class="toc-text">2，原生架构（生产环境）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web%E5%AE%89%E5%85%A8"><span class="toc-number">2.</span> <span class="toc-text">web安全</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90"><span class="toc-number">2.1.</span> <span class="toc-text">HTTP协议解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8F%91%E8%B5%B7HTTP%E8%AF%B7%E6%B1%82"><span class="toc-number">2.1.1.</span> <span class="toc-text">1.发起HTTP请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-HTTP%E8%AF%A6%E8%A7%A3"><span class="toc-number">2.1.2.</span> <span class="toc-text">2.HTTP详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95"><span class="toc-number">2.1.3.</span> <span class="toc-text">3.HTTP请求方法</span></a></li></ol></li></ol></li></ol>	
         </div>
     
 </div>
