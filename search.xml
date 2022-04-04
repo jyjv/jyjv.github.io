@@ -961,7 +961,7 @@
     <content><![CDATA[]]></content>
   </entry>
   <entry>
-    <title>buuctf*</title>
+    <title>upload</title>
     <url>/2022/01/24/upload/</url>
     <content><![CDATA[<p><a href="https://blog.csdn.net/Z_Grant/article/details/100606382">(47条消息) 文件包含——原理及应用和防护（1）_Z_Grant的博客-CSDN博客_文件包含的作用</a></p>
 <p><a href="https://blog.csdn.net/Z_Grant/article/details/100606382">https://blog.csdn.net/Z_Grant/article/details/100606382</a></p>
@@ -970,16 +970,22 @@
 <p><a href="https://www.cnblogs.com/moon3/p/12688281.html">php一句话木马变形技巧 - moon3 - 博客园 (cnblogs.com)</a></p>
 ]]></content>
       <categories>
-        <category>buuctf*</category>
+        <category>upload</category>
       </categories>
       <tags>
-        <tag>buuctf*</tag>
+        <tag>upload</tag>
       </tags>
   </entry>
   <entry>
-    <title>upload</title>
+    <title>ssi</title>
     <url>/2022/02/14/ssi/</url>
     <content><![CDATA[]]></content>
+      <categories>
+        <category>ssi</category>
+      </categories>
+      <tags>
+        <tag>ssi</tag>
+      </tags>
   </entry>
   <entry>
     <title>脚本</title>
@@ -1136,6 +1142,12 @@
 <p>​          Download=xxxx/xxx/xx</p>
 <h2 id="10-ssrf中的别样技巧"><a href="#10-ssrf中的别样技巧" class="headerlink" title="10.ssrf中的别样技巧"></a>10.ssrf中的别样技巧</h2><p><a href="https://mp.weixin.qq.com/s?__biz=Mzg5NDY4NTc4NQ==&mid=2247484267&idx=1&sn=0a5526ad149631ae6a2501b4d7cd3e0d&chksm=c01a845df76d0d4bc1e2967487a5678f0a8bd31a3cce108b8ca1c7cfdf5cf7d6969e672d3089&mpshare=1&scene=23&srcid=0308IBGVi6qRrVd6R8a0qiyG&sharer_sharetime=1646699219146&sharer_shareid=2cd15dd5abca7cee0fa30d6c72437d05#rd">SSRF中的别样技巧 (qq.com)</a></p>
 ]]></content>
+      <categories>
+        <category>ssrf</category>
+      </categories>
+      <tags>
+        <tag>ssrf</tag>
+      </tags>
   </entry>
   <entry>
     <title>postjwt</title>
@@ -1143,7 +1155,7 @@
     <content><![CDATA[]]></content>
   </entry>
   <entry>
-    <title>wen渗透</title>
+    <title>web渗透</title>
     <url>/2022/03/23/web%E6%B8%97%E9%80%8F/</url>
     <content><![CDATA[<h1 id="虚拟化结构与系统部署"><a href="#虚拟化结构与系统部署" class="headerlink" title="虚拟化结构与系统部署"></a><strong>虚拟化结构与系统部署</strong></h1><p><strong>网络设备</strong>：路由器，交换机</p>
 <p><strong>操作系统</strong>（operating system，简称OS）是管理<a href="https://baike.baidu.com/item/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A1%AC%E4%BB%B6/5459592">计算机硬件</a>与<a href="https://baike.baidu.com/item/%E8%BD%AF%E4%BB%B6/12053">软件</a>资源的<a href="https://baike.baidu.com/item/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A8%8B%E5%BA%8F/3220205">计算机程序</a>。操作系统需要处理如管理与<a href="https://baike.baidu.com/item/%E9%85%8D%E7%BD%AE/2394679">配置</a><a href="https://baike.baidu.com/item/%E5%86%85%E5%AD%98/103614">内存</a>、决定<a href="https://baike.baidu.com/item/%E7%B3%BB%E7%BB%9F%E8%B5%84%E6%BA%90/974435">系统资源</a>供需的优先次序、控制<a href="https://baike.baidu.com/item/%E8%BE%93%E5%85%A5%E8%AE%BE%E5%A4%87/10823368">输入设备</a>与<a href="https://baike.baidu.com/item/%E8%BE%93%E5%87%BA%E8%AE%BE%E5%A4%87/10823333">输出设备</a>、操作网络与管理<a href="https://baike.baidu.com/item/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/4827215">文件系统</a>等基本事务。操作系统也提供一个让用户与系统<a href="https://baike.baidu.com/item/%E4%BA%A4%E4%BA%92/6964417">交互</a>的操作界面。</p>
@@ -1173,10 +1185,10 @@
 <p>OPTIONS</p>
 ]]></content>
       <categories>
-        <category>wen渗透</category>
+        <category>web渗透</category>
       </categories>
       <tags>
-        <tag>wen渗透</tag>
+        <tag>web渗透</tag>
       </tags>
   </entry>
   <entry>
@@ -1261,7 +1273,7 @@
       </tags>
   </entry>
   <entry>
-    <title>linux caozuo</title>
+    <title>linux 操作</title>
     <url>/2022/01/14/linux-%E6%93%8D%E4%BD%9C/</url>
     <content><![CDATA[<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><h2 id="查找目录-ls"><a href="#查找目录-ls" class="headerlink" title="查找目录 ls"></a>查找目录 ls</h2><p>.隐藏文件</p>
 <p>.当前文件夹 </p>
@@ -1288,15 +1300,21 @@
 <p><img src="linux-caozuo.assets/image-20220114222034525.png" alt="image-20220114222034525"></p>
 ]]></content>
       <categories>
-        <category>linux caozuo</category>
+        <category>linux 操作</category>
       </categories>
       <tags>
-        <tag>linux caozuo</tag>
+        <tag>linux 操作</tag>
       </tags>
   </entry>
   <entry>
-    <title>kuangjia</title>
+    <title>框架</title>
     <url>/2022/03/14/%E6%A1%86%E6%9E%B6/</url>
     <content><![CDATA[]]></content>
+      <categories>
+        <category>框架</category>
+      </categories>
+      <tags>
+        <tag>框架</tag>
+      </tags>
   </entry>
 </search>
