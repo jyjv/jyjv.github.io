@@ -360,40 +360,6 @@
       </tags>
   </entry>
   <entry>
-    <title>linux caozuo</title>
-    <url>/2022/01/14/linux-caozuo/</url>
-    <content><![CDATA[<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><h2 id="查找目录-ls"><a href="#查找目录-ls" class="headerlink" title="查找目录 ls"></a>查找目录 ls</h2><p>.隐藏文件</p>
-<p>.当前文件夹 </p>
-<p>..上级目录</p>
-<p>-a  全部文件   -l 显示详细信息  </p>
-<p>ls -lh  查看详细信息</p>
-<p><strong>通配符</strong></p>
-<p>*可以代替任意个数的字符  模糊查找   ？只能代替一个</p>
-<p>[1234]23.txt   [1-4]23.txt</p>
-<h2 id="切换目录-cd"><a href="#切换目录-cd" class="headerlink" title="切换目录   cd"></a>切换目录   cd</h2><p>cd   cd ~   切换到当前目录的主目录</p>
-<p>cd .. 切换到上级目录  </p>
-<p>cd - 在最近使用的两个之间来回切换目录</p>
-<h2 id="创建和删除操作"><a href="#创建和删除操作" class="headerlink" title="创建和删除操作"></a>创建和删除操作</h2><p>touch 文件名</p>
-<p>mkdir 创建新目录   -p   递归创建</p>
-<p>rm  删除   不能恢复</p>
-<h2 id="拷贝和移动文件"><a href="#拷贝和移动文件" class="headerlink" title="拷贝和移动文件"></a>拷贝和移动文件</h2><p>tree 以树状图列出文件目录结构   -d 只显示目录</p>
-<p><strong>cp</strong>  源文件 目标文件  cd ~/dss/ef.txt . </p>
-<p>-i 覆盖文件前的提示</p>
-<p>-r 复制目录</p>
-<p>mv 要移动文件的源 文件  目标文件</p>
-<p>grep 查找</p>
-<h1 id="远程管理命令"><a href="#远程管理命令" class="headerlink" title="远程管理命令"></a>远程管理命令</h1><h2 id="ssh"><a href="#ssh" class="headerlink" title="ssh"></a>ssh</h2><p>ssh -p 端口号 user@remote </p>
-<p>exit 退出当前用户登录</p>
-<p><img src="linux-caozuo.assets/image-20220114222034525.png" alt="image-20220114222034525"></p>
-]]></content>
-      <categories>
-        <category>linux caozuo</category>
-      </categories>
-      <tags>
-        <tag>linux caozuo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ping</title>
     <url>/2022/01/05/ping/</url>
     <content><![CDATA[<h1 id="GXYCTF2019-Ping-Ping-Ping-命令注入"><a href="#GXYCTF2019-Ping-Ping-Ping-命令注入" class="headerlink" title="[[GXYCTF2019]Ping Ping Ping]命令注入"></a>[[GXYCTF2019]Ping Ping Ping]命令注入</h1><p>1.管道符</p>
@@ -1172,11 +1138,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>kuangjia</title>
-    <url>/2022/03/14/kuangjia/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>postjwt</title>
     <url>/2022/03/14/postjwt/</url>
     <content><![CDATA[]]></content>
@@ -1298,5 +1259,44 @@
       <tags>
         <tag>sqli-labs通关记录</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>linux caozuo</title>
+    <url>/2022/01/14/linux-%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><h2 id="查找目录-ls"><a href="#查找目录-ls" class="headerlink" title="查找目录 ls"></a>查找目录 ls</h2><p>.隐藏文件</p>
+<p>.当前文件夹 </p>
+<p>..上级目录</p>
+<p>-a  全部文件   -l 显示详细信息  </p>
+<p>ls -lh  查看详细信息</p>
+<p><strong>通配符</strong></p>
+<p>*可以代替任意个数的字符  模糊查找   ？只能代替一个</p>
+<p>[1234]23.txt   [1-4]23.txt</p>
+<h2 id="切换目录-cd"><a href="#切换目录-cd" class="headerlink" title="切换目录   cd"></a>切换目录   cd</h2><p>cd   cd ~   切换到当前目录的主目录</p>
+<p>cd .. 切换到上级目录  </p>
+<p>cd - 在最近使用的两个之间来回切换目录</p>
+<h2 id="创建和删除操作"><a href="#创建和删除操作" class="headerlink" title="创建和删除操作"></a>创建和删除操作</h2><p>touch 文件名</p>
+<p>mkdir 创建新目录   -p   递归创建</p>
+<p>rm  删除   不能恢复</p>
+<h2 id="拷贝和移动文件"><a href="#拷贝和移动文件" class="headerlink" title="拷贝和移动文件"></a>拷贝和移动文件</h2><p>tree 以树状图列出文件目录结构   -d 只显示目录</p>
+<p><strong>cp</strong>  源文件 目标文件  cd ~/dss/ef.txt . </p>
+<p>-i 覆盖文件前的提示</p>
+<p>-r 复制目录</p>
+<p>mv 要移动文件的源 文件  目标文件</p>
+<p>grep 查找</p>
+<h1 id="远程管理命令"><a href="#远程管理命令" class="headerlink" title="远程管理命令"></a>远程管理命令</h1><h2 id="ssh"><a href="#ssh" class="headerlink" title="ssh"></a>ssh</h2><p>ssh -p 端口号 user@remote </p>
+<p>exit 退出当前用户登录</p>
+<p><img src="linux-caozuo.assets/image-20220114222034525.png" alt="image-20220114222034525"></p>
+]]></content>
+      <categories>
+        <category>linux caozuo</category>
+      </categories>
+      <tags>
+        <tag>linux caozuo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>kuangjia</title>
+    <url>/2022/03/14/%E6%A1%86%E6%9E%B6/</url>
+    <content><![CDATA[]]></content>
   </entry>
 </search>
