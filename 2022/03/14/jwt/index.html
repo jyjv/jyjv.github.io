@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="Fechin,"> 
-    
+    <meta name="description" content="jwt简介1JWT(JSON Web Token) 是一个非常轻巧的规范，通过这个规范，可以传递可靠的安全信息，JWT常被用于前后端分离，可以和Restful API配合使用，常用于构建身份认证机制,"> 
     <meta name="author" content="John Doe"> 
     <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
     <link rel="icon" href="/img/85E0B2FE93C1D59651632D67AC59568B.png"> 
@@ -54,7 +54,27 @@
 
         </div>
         <div class="content markdown">
-            
+            <h1 id="jwt简介"><a href="#jwt简介" class="headerlink" title="jwt简介"></a>jwt简介</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JWT(JSON Web Token) 是一个非常轻巧的规范，通过这个规范，可以传递可靠的安全信息，JWT常被用于前后端分离，可以和Restful API配合使用，常用于构建身份认证机制。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">JWT的数据格式分为三个部分： headers , payloads，signature(签名)，它们使用.点号分割</span><br><span class="line"></span><br><span class="line">头部(Header)用于描述JWT的最基本的信息</span><br><span class="line">&#123; “typ”: “JWT”, </span><br><span class="line">  “alg”: “HS256″</span><br><span class="line">&#125;</span><br><span class="line">#base64 编码之后，形成头部</span><br><span class="line"></span><br><span class="line">载荷（Payload）也是json形式，如：</span><br><span class="line">&#123;</span><br><span class="line">  &quot;sub&quot;: &quot;1234567890&quot;,</span><br><span class="line">  &quot;name&quot;: &quot;John Doe&quot;,</span><br><span class="line">  &quot;iat&quot;: 1516239022</span><br><span class="line">&#125;</span><br><span class="line">签名：</span><br><span class="line">将上面的两个编码后的字符串用.连接在一起 </span><br><span class="line">提供一个密钥（secret）用头部所规定的算法加密就可以形成一个新的字符串同样</span><br><span class="line">需要base64编码，以上将三个部分用 .拼接在一起，就形成了一个完整的JWT令牌</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.首先服务端会产生一个key，然后以这个key作为密钥，使用第一部分选择的加密方式，对第一部分和第二部分拼接的结果进行加密，然后把加密结果放到第三部分。</span><br><span class="line">2.服务器每次收到信息都会对它的前两部分进行加密，然后比对加密后的结果是否跟客户端传送过来的第三部分相同，如果相同则验证通过，否则失败。</span><br></pre></td></tr></table></figure>
+
+<h1 id="JWT的安全问题"><a href="#JWT的安全问题" class="headerlink" title="JWT的安全问题"></a>JWT的安全问题</h1><h2 id="绕过这种验证机制"><a href="#绕过这种验证机制" class="headerlink" title="绕过这种验证机制"></a><strong>绕过这种验证机制</strong></h2><ol>
+<li><p><strong>修改算法为<code>none</code></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">后端若支持none算法，header中的alg字段可被修改为none，去掉JWT中的signature数据（仅剩header + .+ payload + .） 然后直接提交到服务端去。</span><br></pre></td></tr></table></figure>
+
+<p>2.<strong>修改算法</strong><em><strong>RS256为HS256</strong></em>*</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RS256是非对称加密算法，HS是对称加密算法，如果JWT内部的函数支持的RS256算法，同时又支持HS256算法，而且如果已知公钥的话，将算法改成HS256，那么后端就会用这个公钥当作密钥来加密</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>3.<strong>信息泄露</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JWT是以base64编码传输的，虽然密钥不可见，但是其数据记本上是明文传输的，如果传输了重要的内容，可以base64解码然后获取其重要的信息。</span><br></pre></td></tr></table></figure>
+
+<p>4.<strong>爆破密钥</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果密钥比较短的话，已知加密算法，通过暴力破解的方式，可以得到其密钥。</span><br></pre></td></tr></table></figure>
+
+<p>参考文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43431158/article/details/105944198">(63条消息) 关于JWT的赛题_Sn0w/的博客-CSDN博客</a></p>
+
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
                 <source type="audio/mpeg" src="">
@@ -89,7 +109,7 @@
     </div>
     
         <div class='side'>
-				
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#jwt%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">jwt简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81"><span class="toc-number">1.1.</span> <span class="toc-text">验证</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JWT%E7%9A%84%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">JWT的安全问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E8%BF%99%E7%A7%8D%E9%AA%8C%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-number">2.1.</span> <span class="toc-text">绕过这种验证机制</span></a></li></ol></li></ol>	
         </div>
     
 </div>
