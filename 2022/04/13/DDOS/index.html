@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DDOS - Hexo</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="  分布式拒绝服务
+原理将多台计算机联合起来作为攻击平台，通过远程连接利用恶意程序，对一个或多个目标发起攻击，消耗目标服务器的性能或网络宽带，从而导致无法正常提供服务。
+危害
+重大经济损失
+在遭受D,"> 
+    <meta name="author" content="John Doe"> 
+    <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
+    <link rel="icon" href="/img/85E0B2FE93C1D59651632D67AC59568B.png"> 
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">Hexo</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="http://example.com"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">DDOS</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">DDOS</h1>
+        <div class="stuff">
+            <span>四月 13, 2022</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/DDOS/" rel="tag">DDOS</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>  分布式拒绝服务</p>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>将多台计算机联合起来作为攻击平台，通过远程连接利用恶意程序，对一个或多个目标发起攻击，消耗目标服务器的性能或网络宽带，从而导致无法正常提供服务。</p>
+<h1 id="危害"><a href="#危害" class="headerlink" title="危害"></a>危害</h1><ul>
+<li><p>重大经济损失</p>
+<p>在遭受DDoS攻击后，您的源站服务器可能无法提供服务，导致用户无法访问您的业务，从而造成巨大的经济损失和品牌损失。</p>
+<p>例如：某电商平台在遭受DDoS攻击时，网站无法正常访问甚至出现短暂的关闭，导致合法用户无法下单购买商品等。</p>
+</li>
+<li><p>数据泄露</p>
+<p>黑客在对您的服务器进行DDoS攻击时，可能会趁机窃取您业务的核心数据。</p>
+</li>
+<li><p>恶意竞争</p>
+<p>部分行业存在恶性竞争，竞争对手可能会通过DDoS攻击恶意攻击您的服务，从而在行业竞争中获取优势。</p>
+<p>例如：某游戏业务遭受了DDoS攻击，游戏玩家数量锐减，导致该游戏业务几天内迅速彻底下线。</p>
+</li>
+</ul>
+<h1 id="tcp-ip协议"><a href="#tcp-ip协议" class="headerlink" title="tcp/ip协议"></a>tcp/ip协议</h1><p>​                  客户端                                         服务器</p>
+<p>应用层       HTTP</p>
+<p>传输层        TCP   UDP(不需要反复握手)</p>
+<p>互联网层   IP</p>
+<p>子网层       以太网，卫星网</p>
+<p>TCP三次握手内容包括：SYN   1         ACK 0</p>
+<p>​                                        顺序号   x    确认号</p>
+<p>​                                         SYN   1         ACK 1</p>
+<p>​                                        顺序号    y  确认号x+1</p>
+<p>​                                        SYN   0         ACK 1</p>
+<p>​                                        顺序号    x+1  确认号y+1</p>
+<h1 id="常见的DDoS攻击类型"><a href="#常见的DDoS攻击类型" class="headerlink" title="常见的DDoS攻击类型"></a>常见的DDoS攻击类型</h1><h2 id="传输层DDoS攻击"><a href="#传输层DDoS攻击" class="headerlink" title="传输层DDoS攻击"></a>传输层DDoS攻击</h2><p><strong>攻击子类</strong></p>
+<p>传输层DDoS攻击主要包括Syn Flood、Ack Flood、UDP Flood（需要伪造ip地址）、ICMP Flood、RstFlood等。</p>
+<p>ICMP是IP协议中用来进行差错控制的一个补充</p>
+<p>tcp flood 服务器连接表是有限的 ，tcp协议需要经历三次握手后建立连接</p>
+<p>tcp中通常用四次挥手结束连接，但是为了防止出现异常，一方发送一个rst数据强制切断连接</p>
+<p>以Syn Flood攻击为例，它利用了TCP协议的三次握手机制，当服务端接收到一个Syn请求时，服务端必须使用一个监听队列将该连接保存一定时间。因此，通过向服务端不停发送Syn请求，但不响应Syn+Ack报文，从而消耗服务端的资源。当监听队列被占满时，服务端将无法响应正常用户的请求，达到拒绝服务攻击的目的。（通常需要伪造ip或者找一个倒霉蛋的ip)</p>
+<p>RstFlood ，攻击者不断伪造IP，并且发送RST，一旦和某个正常用户匹配上，就能切断正常用户和服务器之间的连接</p>
+<h2 id="反射型"><a href="#反射型" class="headerlink" title="反射型"></a>反射型</h2><p>类似于把发件地址改为目标服务器，把这个发送到第三方(反射器 )，让第三方去攻击目标</p>
+<h2 id="DNS-DDoS攻击（放大攻击）"><a href="#DNS-DDoS攻击（放大攻击）" class="headerlink" title="DNS DDoS攻击（放大攻击）"></a>DNS DDoS攻击（放大攻击）</h2><p>DNS服务器的作用是将客户端发送的域名转化为ip，字节会变大，通常用udp</p>
+<p>DNS DDoS攻击主要包括DNS Request Flood、DNS Response Flood、虚假源+真实源DNS Query Flood、权威服务器攻击和Local服务器攻击等。</p>
+<p>以DNS Query Flood攻击为例，其本质上执行的是真实的Query请求，属于正常业务行为。但如果多台傀儡机同时发起海量的域名查询请求，服务端无法响应正常的Query请求，从而导致拒绝服务。</p>
+<h2 id="Web应用层DDoS攻击"><a href="#Web应用层DDoS攻击" class="headerlink" title="Web应用层DDoS攻击"></a>Web应用层DDoS攻击</h2><p>Web应用层攻击主要是指HTTP Get Flood、HTTP Post Flood、CC等攻击。</p>
+<p>通常应用层攻击完全模拟用户请求，类似于各种搜索引擎和爬虫一样，这些攻击行为和正常的业务并没有严格的边界，难以辨别。</p>
+<p>Web服务中一些资源消耗较大的事务和页面。例如，Web应用中的分页和分表，如果控制页面的参数过大，频繁的翻页将会占用较多的Web服务资源。尤其在高并发频繁调用的情况下，类似这样的事务就成了早期CC攻击的目标。</p>
+<p>由于现在的攻击大都是混合型的，因此模拟用户行为的频繁操作都可以被认为是CC攻击。例如，各种刷票软件对网站的访问，从某种程度上来说就是CC攻击。</p>
+<p>CC攻击瞄准的是Web应用的后端业务，除了导致拒绝服务外，还会直接影响Web应用的功能和性能，包括Web响应时间、数据库服务、磁盘读写等。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$sql</span>=“select * <span class="keyword">from</span> post where tagid=‘<span class="variable">$tagid</span>’ order by postid desc limit <span class="variable">$start</span>,<span class="number">30</span>”</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="连接型DDoS攻击"><a href="#连接型DDoS攻击" class="headerlink" title="连接型DDoS攻击"></a>连接型DDoS攻击</h2><p>连接型DDoS攻击主要是指TCP慢速连接攻击、连接耗尽攻击、Loic、Hoic、Slowloris、 Pyloris、Xoic等慢速攻击。</p>
+<p>以Slowloris攻击为例，其攻击目标是Web服务器的并发上限。当Web服务器的连接并发数达到上限后，Web服务即无法接受新的请求。Web服务接收到新的HTTP请求时，建立新的连接来处理请求，并在处理完成后关闭这个连接。如果该连接一直处于连接状态，收到新的HTTP请求时则需要建立新的连接进行处理。而当所有连接都处于连接状态时，Web将无法处理任何新的请求。</p>
+<p>Slowloris攻击利用HTTP协议的特性来达到攻击目的。HTTP请求以<code>\r\n\r\n</code>标识Headers的结束，如果Web服务端只收到<code>\r\n</code>，则认为HTTP Headers部分没有结束，将保留该连接并等待后续的请求内容。</p>
+<h2 id="畸形报文"><a href="#畸形报文" class="headerlink" title="畸形报文"></a>畸形报文</h2><p>畸形报文主要包括Frag Flood、Smurf、Stream Flood、Land Flood、IP畸形报文、TCP畸形报文、UDP畸形报文等。</p>
+<p>畸形报文攻击指通过向目标系统发送有缺陷的IP报文，使得目标系统在处理这样的报文时出现崩溃，从而达到拒绝服务的攻击目的。</p>
+<h2 id="如何判断业务是否已遭受DDoS攻击？"><a href="#如何判断业务是否已遭受DDoS攻击？" class="headerlink" title="如何判断业务是否已遭受DDoS攻击？"></a>如何判断业务是否已遭受DDoS攻击？</h2><p>出现以下情况时，您的业务可能已遭受DDoS攻击：</p>
+<ul>
+<li>网络和设备正常的情况下，服务器突然出现连接断开、访问卡顿、用户掉线等情况。</li>
+<li>服务器CPU或内存占用率出现明显增长。</li>
+<li>网络出方向或入方向流量出现明显增长。</li>
+<li>您的业务网站或应用程序突然出现大量的未知访问。</li>
+<li>登录服务器失败或者登录过慢。</li>
+</ul>
+<h1 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h1><p>DDOS防范大致分为两个层面，其中之一面向服务器维护人员，这个可以从通用型防范方法，比如通过CDN盾，ADS等，还可以针对常见的DDOS攻击类型提出针对性防范措施，比如针对CC，使用人机识别等；另外一个层面是网络服务商防范DDOS，通常采取配置URPF，近源部署ADS等。从网络层和应用层两方面来防范，网络层较易，应用层较难。<br>————————————————<br>版权声明：本文为CSDN博主「Andrew_Funny」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37931597/article/details/86433280">https://blog.csdn.net/qq_37931597/article/details/86433280</a></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                        
+                            <li title='1' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='true'
+        data-ae='true'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+        <div class='side'>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%B1%E5%AE%B3"><span class="toc-number">2.</span> <span class="toc-text">危害</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#tcp-ip%E5%8D%8F%E8%AE%AE"><span class="toc-number">3.</span> <span class="toc-text">tcp&#x2F;ip协议</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84DDoS%E6%94%BB%E5%87%BB%E7%B1%BB%E5%9E%8B"><span class="toc-number">4.</span> <span class="toc-text">常见的DDoS攻击类型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82DDoS%E6%94%BB%E5%87%BB"><span class="toc-number">4.1.</span> <span class="toc-text">传输层DDoS攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E5%9E%8B"><span class="toc-number">4.2.</span> <span class="toc-text">反射型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DNS-DDoS%E6%94%BB%E5%87%BB%EF%BC%88%E6%94%BE%E5%A4%A7%E6%94%BB%E5%87%BB%EF%BC%89"><span class="toc-number">4.3.</span> <span class="toc-text">DNS DDoS攻击（放大攻击）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web%E5%BA%94%E7%94%A8%E5%B1%82DDoS%E6%94%BB%E5%87%BB"><span class="toc-number">4.4.</span> <span class="toc-text">Web应用层DDoS攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%9E%8BDDoS%E6%94%BB%E5%87%BB"><span class="toc-number">4.5.</span> <span class="toc-text">连接型DDoS攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%95%B8%E5%BD%A2%E6%8A%A5%E6%96%87"><span class="toc-number">4.6.</span> <span class="toc-text">畸形报文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E4%B8%9A%E5%8A%A1%E6%98%AF%E5%90%A6%E5%B7%B2%E9%81%AD%E5%8F%97DDoS%E6%94%BB%E5%87%BB%EF%BC%9F"><span class="toc-number">4.7.</span> <span class="toc-text">如何判断业务是否已遭受DDoS攻击？</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%98%B2%E5%BE%A1"><span class="toc-number">5.</span> <span class="toc-text">防御</span></a></li></ol>	
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>
