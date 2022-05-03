@@ -1628,7 +1628,78 @@
   <entry>
     <title>框架</title>
     <url>/2022/03/14/%E6%A1%86%E6%9E%B6/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<h1 id="PHP"><a href="#PHP" class="headerlink" title="PHP"></a>PHP</h1><p>MVC<strong>和三层结构的认识</strong></p>
+<p>MVC是一种将视图，数据，控制三者分开的一种开发模式：</p>
+<p>M -Model  编写该类，负责数据的操作</p>
+<p>V-View     编写前端文件，负责前台页面显示</p>
+<p>C-Controller  控制器   编写类文件  IndexController.class.php  其中有很多方法，通过方法对web应用进行修改，删除等操作</p>
+<h2 id="ThinkPHP-3-2-3"><a href="#ThinkPHP-3-2-3" class="headerlink" title="ThinkPHP 3.2.3"></a>ThinkPHP 3.2.3</h2><h3 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h3><p><strong>目录结构</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">www  WEB部署目录（或者子目录）</span><br><span class="line">├─index.php       入口文件</span><br><span class="line">├─README.md       README文件</span><br><span class="line">├─Application     应用目录</span><br><span class="line">├─Public          资源文件目录</span><br><span class="line">└─ThinkPHP        框架目录</span><br></pre></td></tr></table></figure>
+
+<p>框架目录ThinkPHP的结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├─ThinkPHP 框架系统目录（可以部署在非web目录下面）</span><br><span class="line">│  ├─Common       核心公共函数目录</span><br><span class="line">│  ├─Conf         核心配置目录 </span><br><span class="line">│  ├─Lang         核心语言包目录</span><br><span class="line">│  ├─Library      框架类库目录</span><br><span class="line">│  │  ├─Think     核心Think类库包目录</span><br><span class="line">│  │  ├─Behavior  行为类库目录</span><br><span class="line">│  │  ├─Org       Org类库包目录</span><br><span class="line">│  │  ├─Vendor    第三方类库目录</span><br><span class="line">│  │  ├─ ...      更多类库目录</span><br><span class="line">│  ├─Mode         框架应用模式目录</span><br><span class="line">│  ├─Tpl          系统模板目录</span><br><span class="line">│  ├─LICENSE.txt  框架授权协议文件</span><br><span class="line">│  ├─logo.png     框架LOGO文件</span><br><span class="line">│  ├─README.txt   框架README文件</span><br><span class="line">│  └─ThinkPHP.php    框架入口文件</span><br></pre></td></tr></table></figure>
+
+<p><strong>入口文件****index.php</strong></p>
+<p>入口文件主要完成：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">定义框架路径、项目路径（可选）</span><br><span class="line">定义调试模式和应用模式（可选）</span><br><span class="line">定义系统相关常量（可选）</span><br><span class="line">载入框架入口文件（必须）</span><br></pre></td></tr></table></figure>
+
+<p>应用入口文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">define(&#x27;APP_PATH&#x27;,&#x27;./Application/&#x27;);</span><br><span class="line">require &#x27;./ThinkPHP/ThinkPHP.php&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>入口文件的其他定义</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">常量	         描述</span><br><span class="line">THINK_PATH	   框架目录</span><br><span class="line">APP_PATH	   应用目录</span><br><span class="line">RUNTIME_PATH    应用运行时目录（可写）</span><br><span class="line">APP_DEBUG	    应用调试模式 （默认为false）</span><br><span class="line">STORAGE_TYPE	存储类型（默认为File）</span><br><span class="line">APP_MODE	   应用模式（默认为common）</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 定义应用目录</span><br><span class="line">define(&#x27;APP_PATH&#x27;,&#x27;./Apps/&#x27;);</span><br><span class="line">// 定义运行时目录</span><br><span class="line">define(&#x27;RUNTIME_PATH&#x27;,&#x27;./Runtime/&#x27;);</span><br><span class="line">// 开启调试模式</span><br><span class="line">define(&#x27;APP_DEBUG&#x27;,True);</span><br><span class="line">// 更名框架目录名称，并载入框架入口文件</span><br><span class="line">require &#x27;./Think/ThinkPHP.php&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Application</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Application</span><br><span class="line">├─Common         应用公共模块</span><br><span class="line">│  ├─Common      应用公共函数目录</span><br><span class="line">│  └─Conf        应用公共配置文件目录</span><br><span class="line">├─Home           默认生成的Home模块</span><br><span class="line">│  ├─Conf        模块配置文件目录</span><br><span class="line">│  ├─Common      模块函数公共目录</span><br><span class="line">│  ├─Controller  模块控制器目录</span><br><span class="line">│  ├─Model       模块模型目录</span><br><span class="line">│  └─View        模块视图文件目录</span><br><span class="line">├─Runtime        运行时目录</span><br><span class="line">│  ├─Cache       模版缓存目录</span><br><span class="line">│  ├─Data        数据目录</span><br><span class="line">│  ├─Logs        日志目录</span><br><span class="line">│  └─Temp        缓存目录</span><br></pre></td></tr></table></figure>
+
+<p>安全文件</p>
+<p>为了避免某些服务器开启了目录浏览权限后可以直接在浏览器输入URL地址查看目录，系统默认开启了目录安全文件机制，会在自动生成目录的时候生成空白的<code>index.html</code>文件，当然安全文件的名称可以设置，例如你想给安全文件定义为<code>default.html</code>可以在入口文件中添加：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">define(&#x27;DIR_SECURE_FILENAME&#x27;, &#x27;default.html&#x27;);</span><br><span class="line">define(&#x27;APP_PATH&#x27;,&#x27;./Application/&#x27;);</span><br><span class="line">require &#x27;./ThinkPHP/ThinkPHP.php&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>如果你的环境足够安全，不希望生成目录安全文件，可以在入口文件里面关闭目录安全文件的生成，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">define(&#x27;BUILD_DIR_SECURE&#x27;, false);</span><br></pre></td></tr></table></figure>
+
+<p><strong>路由</strong></p>
+<p>由于ThinkPHP3.2采用的URL规则是：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://serverName/module/controller/action/param/value/...</span><br></pre></td></tr></table></figure>
+
+<p>路由解析的最终结果通常是把URL地址解析到当前模块的某个控制器下的操作方法</p>
+<p><strong>模板</strong></p>
+<p>每个模板文件在执行过程中都会生成一个编译后的缓存文件，其实就是一个可以运行的PHP文件。模板缓存默认位于项目的Runtime/模块/Cache目录下面，以模板文件的md5编码作为缓存文件名保存的。如果在模板标签的使用过程中发现问题，可以尝试通过查看模板缓存文件找到问题所在。</p>
+<h3 id="输入过滤"><a href="#输入过滤" class="headerlink" title="输入过滤"></a>输入过滤</h3><ul>
+<li><p>开启<a href="https://static.kancloud.cn/manual/thinkphp/1841#">令牌验证</a>避免数据的重复提交；</p>
+</li>
+<li><p>使用<a href="https://static.kancloud.cn/manual/thinkphp/1841#">自动验证</a>和<a href="https://static.kancloud.cn/manual/thinkphp/1841#">自动完成</a>机制进行初步过滤；</p>
+</li>
+<li><p>使用系统提供的<a href="https://static.kancloud.cn/manual/thinkphp/1841#">I函数</a>获取用户输入数据；</p>
+</li>
+<li><p>对不同的应用需求设置不同的安全过滤函数，常见的安全过滤函数包括stripslashes（删除)、htmlentities(把字符转换为 HTML 实体)、htmlspecialchars(把预定义的字符转换为 HTML 实体)和strip_tags(剥去字符串中的 HTML 标签)等；<strong>intval()</strong> 函数用于获取变量的整数值。</p>
+<p>预定义的字符是：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&amp; （和号）成为 &amp;</span><br><span class="line">&quot; （双引号）成为 &quot;</span><br><span class="line">&#x27; （单引号）成为 &#x27;</span><br><span class="line">&lt; （小于）成为 &lt;</span><br><span class="line">&gt; （大于）成为 &gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用I</strong><em>函数过滤</em>*</p>
+<p>使用系统内置的<code>I函数</code>是避免输入数据出现安全隐患的重要手段，I函数默认的过滤方法是<code>htmlspecialchars</code></p>
+<p><strong>写入数据过滤</strong></p>
+<p>如果你没有使用I函数进行数据过滤的话，还可以在模型的写入操作之前调用<strong>filter</strong>方法对数据进行安全过滤，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$this-&gt;data($data)-&gt;filter(&#x27;strip_tags&#x27;)-&gt;add();</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="表单合法性检测"><a href="#表单合法性检测" class="headerlink" title="表单合法性检测"></a>表单合法性检测</h3><p>在处理表单提交的数据的时候，建议尽量采用Think\Model类提供的create方法首先进行数据创建，然后再写入数据库。</p>
+<blockquote>
+<p>create方法在创建数据的同时，可以进行更为安全的处理操作，而且这一切让你的表单处理变得更简单。</p>
+</blockquote>
+<p>使用create方法创建数据对象的时候，可以使用数据的合法性检测，支持两种方式：</p>
+<p><strong>配置insertFields 和 updateFields属性</strong></p>
+<p><strong>直接调用field方法</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">M(&#x27;User&#x27;)-&gt;field(&#x27;account,password,nickname,email&#x27;)-&gt;create();</span><br><span class="line">M(&#x27;User&#x27;)-&gt;field(&#x27;nickname,email&#x27;)-&gt;create();</span><br></pre></td></tr></table></figure>
+
+<h3 id="表单令牌"><a href="#表单令牌" class="headerlink" title="表单令牌"></a>表单令牌</h3><p>可以有效的防止表单重复提交等安全防护</p>
+<p>Model.class.php </p>
+<p>Drive.class.php  数据条件分析，各种操作数据库</p>
+]]></content>
       <categories>
         <category>框架</category>
       </categories>
@@ -1910,6 +1981,17 @@
       </categories>
       <tags>
         <tag>文件包含漏洞</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>代码审计</title>
+    <url>/2022/04/30/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>代码审计</category>
+      </categories>
+      <tags>
+        <tag>代码审计</tag>
       </tags>
   </entry>
 </search>
